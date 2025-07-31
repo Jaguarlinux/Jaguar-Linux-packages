@@ -29,8 +29,6 @@ See [Contributing](./CONTRIBUTING.md) for a general overview of how to contribut
 - [Remaking the masterdir](#remaking-masterdir)
 - [Keeping your masterdir uptodate](#updating-masterdir)
 - [Building 32bit packages on x86_64](#building-32bit)
-- [Building packages natively for the musl C library](#building-for-musl)
-- [Building Jaguar base-system from scratch](#building-base-system)
 
 ### Requirements
 
@@ -478,32 +476,3 @@ The canonical mode (native) needs a new x86 `masterdir`:
     $ ./dulge-src -A i686 binary-bootstrap
     $ ./dulge-src -A i686 ...
 
-<a name="building-for-musl"></a>
-### Building packages natively for the musl C library
-
-The canonical way of building packages for same architecture but different C library is through a dedicated masterdir by using the host architecture flag `-A`.
-To build for x86_64-musl on glibc x86_64 system, prepare a new masterdir with the musl packages:
-
-    $ ./dulge-src -A x86_64-musl binary-bootstrap
-
-This will create and bootstrap a new masterdir called `masterdir-x86_64-musl` that will be used when `-A x86_64-musl` is specified.
-Your new masterdir is now ready to build packages natively for the musl C library:
-
-    $ ./dulge-src -A x86_64-musl pkg ...
-
-<a name="building-base-system"></a>
-### Building void base-system from scratch
-
-To rebuild all packages in `base-system` for your native architecture:
-
-    $ ./dulge-src -N pkg base-system
-
-It's also possible to cross compile everything from scratch:
-
-    $ ./dulge-src -a <target> -N pkg base-system
-
-Once the build has finished, you can specify the path to the local repository to `void-mklive`, i.e:
-
-    # cd void-mklive
-    # make
-    # ./mklive.sh ... -r /path/to/hostdir/binpkgs

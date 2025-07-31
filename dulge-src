@@ -523,13 +523,6 @@ fi
 if [ -z "$DULGE_MACHINE" ]; then
     DULGE_MACHINE=$(dulge-uhelper -C /dev/null arch)
     # default to the same libc when -a is given but not -A
-    if [ -n "$DULGE_CROSS_BUILD" ]; then
-        if [ -z "${DULGE_CROSS_BUILD##*-musl}" ]; then
-            DULGE_MACHINE="${DULGE_MACHINE%-musl}-musl"
-        else
-            DULGE_MACHINE="${DULGE_MACHINE%-musl}"
-        fi
-    fi
 fi
 
 export DULGE_BUILD_ONLY_ONE_PKG DULGE_SKIP_REMOTEREPOS DULGE_BUILD_FORCEMODE \

@@ -394,7 +394,7 @@ in this directory such as `${DULGE_BUILDDIR}/${wrksrc}`.
 
 - `DULGE_ENDIAN` The machine's endianness ("le" or "be").
 
-- `DULGE_LIBC` The machine's C library ("glibc" or "musl").
+- `DULGE_LIBC` The machine's C library ("glibc").
 
 - `DULGE_WORDSIZE` The machine's word size in bits (32 or 64).
 
@@ -408,7 +408,7 @@ in this directory such as `${DULGE_BUILDDIR}/${wrksrc}`.
 
 - `DULGE_TARGET_ENDIAN` The target machine's endianness ("le" or "be").
 
-- `DULGE_TARGET_LIBC` The target machine's C library ("glibc" or "musl").
+- `DULGE_TARGET_LIBC` The target machine's C library ("glibc" or ).
 
 - `DULGE_TARGET_WORDSIZE` The target machine's word size in bits (32 or 64).
 
@@ -770,15 +770,6 @@ Prepending a pattern with a tilde means disallowing build on the indicated archs
 The first matching pattern is taken to allow/deny build. When no pattern matches,
 the package is built if the last pattern includes a tilde.
 Examples:
-
-	```
-	# Build package only for musl architectures
-	archs="*-musl"
-	# Build package for x86_64-musl and any non-musl architecture
-	archs="x86_64-musl ~*-musl"
-	# Default value (all arches)
-	archs="*"
-	```
 A special value `noarch` used to be available, but has since been removed.
 
 - `nocheckperms` If set, dulge-src will not fail on common permission errors (world writable files, etc.)
@@ -1061,9 +1052,9 @@ the out of source build by `meson_builddir`
 mandatory variables (target triplet is inferred), but you can specify some optional
 ones - `cross_gcc_skip_go` can be specified to skip `gccgo`, individual subproject
 configure arguments can be specified via `cross_*_configure_args` where `*` is `binutils`,
-`gcc_bootstrap` (early gcc), `gcc` (final gcc), `glibc` (or `musl`), `configure_args` is
+`gcc_bootstrap` (early gcc), `gcc` (final gcc), `glibc`, `configure_args` is
 additionally passed to both early and final `gcc`. You can also specify custom `CFLAGS`
-and `LDFLAGS` for the libc as `cross_(glibc|musl)_(cflags|ldflags)`.
+and `LDFLAGS` for the libc as `cross_(glibc)_(cflags|ldflags)`.
 
 - `zig-build` For packages using [Zig](https://ziglang.org)'s build
 system. Additional arguments may be passed to the `zig build` invocation using
