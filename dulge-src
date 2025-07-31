@@ -1,0 +1,1074 @@
+#!/bin/bash
+# vim: set ts=4 sw=4 et:
+
+print_cross_targets() {
+    local f
+    for f in "${DULGE_DISTDIR}"/common/cross-profiles/*.sh; do
+        f=${f%.sh}; f=${f##*/}; printf "\t$f\n"
+    done
+}
+
+usage() {
+    # copied from main logic because this is run before DULGE_DISTDIR is set normally
+    local _distdir="$(readlink -f "${0%/*}")"
+    if [ "${_distdir}" = "." ]; then
+        readonly DULGE_DISTDIR="$(pwd -P)"
+    else
+        readonly DULGE_DISTDIR="${_distdir}"
+    fi
+    cat << _EOF
+$PROGNAME: [options] <target> [arguments]
+
+Targets: (only one may be specified)
+
+binary-bootstrap
+    Install bootstrap packages from host repositories into <masterdir>.
+    If the optional '-A <arch>' flag is set, it will install bootstrap packages
+    from this architecture, and its required dulge utilities. The <masterdir> will
+    be initialized for chroot operations.
+
+bootstrap
+    Build and install from source the bootstrap packages into <masterdir>.
+    If the optional '-A <arch>' flag is set, it will build and install bootstrap
+    packages from this architecture, and its required dulge utilities. The <masterdir>
+    will be initialized for chroot operations.
+
+bootstrap-update
+    Updates bootstrap packages with latest versions available from registered
+    repositories in the dulge configuration file.
+
+consistency-check
+    Runs a consistency check on all packages
+
+chroot
+    Enter to the chroot in <masterdir>.
+
+clean-repocache
+    Removes obsolete packages from <hostdir>/repocache.
+
+fetch <pkgname>
+    Download package source distribution file(s).
+
+extract <pkgname>
+    Extract package source distribution file(s) into the build directory.
+    By default set to <masterdir>/builddir.
+
+patch <pkgname>
+    Patch the package sources and perform other operations required to
+    prepare a package for configuring and building
+
+configure <pkgname>
+    Configure a package (fetch + extract + patch + configure).
+
+build <pkgname>
+    Build package source (fetch + extract + patch + configure + build).
+
+check <pkgname>
+    Run the package check(s) after building the package source.
+
+install <pkgname>
+    Install target package into <destdir> but not building the binary package
+    and not removing build directory for inspection purposes.
+
+pkg <pkgname>
+    Build binary package for <pkgname> and all required dependencies.
+
+clean [pkgname]
+    Removes auto dependencies, cleans up <masterdir>/builddir and <masterdir>/destdir.
+    If <pkgname> argument is specified, package files from <masterdir>/destdir and its
+    build directory in <masterdir>/buiddir are removed.
+
+list
+    Lists installed packages in <masterdir>.
+
+remove <pkgname>
+    Remove target package from <destdir>. If <pkgname>-<version> is not matched
+    from build template nothing is removed.
+
+remove-autodeps
+    Removes all package dependencies that were installed automatically.
+
+purge-distfiles
+    Removes all obsolete distfiles in <hostdir>/sources.
+
+show <pkgname>
+    Show information for the specified package.
+
+show-avail <pkgname>
+    Returns 0 if package can be built for the given architecture,
+    any other error otherwise.
+
+show-build-deps <pkgname>
+    Show required build dependencies for <pkgname>.
+
+show-check-deps <pkgname>
+    Show required check dependencies for <pkgname>.
+
+show-deps <pkgname>
+    Show required run-time dependencies for <pkgname>. Package must be
+    installed into destdir.
+
+show-files <pkgname>
+    Show files installed by <pkgname>. Package must be installed into destdir.
+
+show-hostmakedepends <pkgname>
+    Show required host build dependencies for <pkgname>.
+
+show-makedepends <pkgname>
+    Show required target build dependencies for <pkgname>.
+
+show-options <pkgname>
+    Show available build options by <pkgname>.
+
+show-shlib-provides <pkgname>
+    Show list of provided shlibs for <pkgname>. Package must be installed into destdir.
+
+show-shlib-requires <pkgname>
+    Show list of required shlibs for <pkgname>. Package must be installed into destdir.
+
+show-var <var>
+    Prints the value of <var> if it's defined in dulge-src.
+
+show-repo-updates
+    Prints the list of outdated packages in dulge repositories.
+
+show-sys-updates
+    Prints the list of outdated packages in your system.
+
+show-local-updates
+    Prints the list of outdated packages in your local repositories.
+
+sort-dependencies <pkg> <pkgN+1> ...
+    Given a list of packages specified as additional arguments, a sorted dependency
+    list will be returned to stdout.
+
+update-bulk
+    Rebuilds all packages in the system repositories that are outdated.
+
+update-sys
+    Rebuilds all packages in your system that are outdated and updates them.
+
+update-local
+    Rebuilds all packages in your local repositories that are outdated.
+
+update-check <pkgname>
+    Check upstream site of <pkgname> for new releases.
+
+update-hash-cache
+    Update the hash cache with existing source distfiles.
+
+zap
+    Removes a masterdir but preserving ccache, distcc and host directories.
+
+Options:
+
+-1  If dependencies of target package are missing, fail instead of building them.
+
+-A <host>
+    Use this host machine. Automatically creates masterdir-<host> if it doesn't
+    already exist. Some host machines may require qemu-user and
+    binfmt-support if not natively supported by the processor. Supported hosts:
+
+$(print_cross_targets)
+
+-a  <target>
+    Cross compile packages for this target machine. Supported targets:
+
+$(print_cross_targets)
+
+-b  Build packages even if marked as broken, nocross, or excluded with archs.
+
+-c  <configuration>
+    If specified, etc/conf.<configuration> will be used as the primary config
+    file name; etc/conf will only be attempted if that does not exist.
+
+-C  Do not remove build directory, automatic dependencies and
+    package destdir after successful install.
+
+-E  If a binary package exists in a repository for the target package,
+    do not try to build it, exit immediately.
+
+-f  Force running the specified stage (configure/build/install/pkg)
+    even if it ran successfully.
+
+-G  Enable DULGE_USE_GIT_REVS (see etc/defaults.conf for more information).
+
+-g  Enable building -dbg packages with debugging symbols.
+
+-H  <hostdir>
+    Absolute path to a directory to be bind mounted at <masterdir>/host.
+    The host directory stores binary packages, sources and package dependencies
+    downloaded from remote repositories.
+    If unset defaults to Jaguar-Linux-packages/hostdir.
+
+-h  Usage output.
+
+-I  Ignore required dependencies, useful for extracting/fetching sources.
+
+-i  Make dulge-src internal errors non-fatal.
+
+-j  Number of parallel build jobs to use when building packages.
+
+-L  Disable ASCII colors.
+
+-m  <masterdir>
+    Absolute path to a directory to be used as masterdir.
+    The masterdir is the main directory to build/store/compile packages.
+    If unset defaults to Jaguar-Linux-packages/masterdir-<host>.
+
+-N  Disable use of remote repositories to resolve dependencies.
+
+-o  <opt,~opt2,...>
+    Enable or disable (prefixed with ~) package build options. If 'etc/conf'
+    already specifies some, it is merged. Keep in mind that these options
+    apply to all packages within the build, as in if a dependency needs to
+    be built, it will inherit these options.
+
+    Supported options can be shown with the 'show-options' target.
+
+-p  <variable,variable2,...>
+    For show target, show specified variables in addition to default ones.
+    Variable is split and each word is printed in separate line by default.
+    In order to print the whole value in one line, append asterisk to variable name.
+
+-Q  Enable running the check stage, for the target package only.
+
+-K  Enable running the check stage with longer tests.
+    Unlike -Q, this will also run the check stage on built dependencies.
+
+-q  Suppress informational output of dulge-src (build output is still printed).
+
+-r  <repo>
+    Use an alternative local repository to store generated binary packages.
+    If unset defaults to <hostdir>/binpkgs. If set the binpkgs will
+    be stored into <hostdir>/binpkgs/<repo>.
+    This alternative repository will also be used to resolve dependencies
+    with highest priority order than others.
+
+-s  Make some warnings into errors.
+
+-t  Create a temporary masterdir to not pollute the current one. Note that
+    the existing masterdir must be fully populated with binary-bootstrap first.
+    Once the target has finished, this temporary masterdir will be removed.
+    This flag requires dulge-uchroot(1), and won't work on filesystems that don't
+    support overlayfs.
+
+-v  Show verbose messages (only affects update-check).
+
+-V  Print version of dulge, then exit.
+
+_EOF
+}
+
+check_reqhost_utils() {
+    local broken
+
+    [ "$IN_CHROOT" ] && return 0
+
+    for f in ${REQHOST_UTILS}; do
+        if ! command -v ${f} &>/dev/null; then
+            echo "${f} is missing in your system, can't continue!" 1>&2
+            broken=1
+        fi
+    done
+    [ "$broken" ] && exit 1
+    [ -z "$1" ] && return 0
+
+    for f in ${REQHOST_UTILS_BOOTSTRAP}; do
+        if ! command -v ${f} &>/dev/null; then
+            echo "${f} is missing in your system, can't continue!" 1>&2
+            broken=1
+        fi
+    done
+    [ "$broken" ] && exit 1
+}
+
+check_build_requirements() {
+    local found
+
+    case "$DULGE_TARGET" in
+        *bootstrap*) found=1;;
+        *) ;;
+    esac
+    if [ -z "$found" ]; then
+        dulge-uhelper cmpver "$DULGE_VERSION" "$DULGE_VERSION_REQ"
+        if [ $? -eq 255 ]; then
+            echo "ERROR: requires dulge>=${DULGE_VERSION_REQ}" 1>&2
+            echo "Bootstrap packages must be updated with 'dulge-src bootstrap-update'" 1>&2
+            exit 1
+        fi
+    fi
+}
+
+chroot_check() {
+    if [ -f $DULGE_MASTERDIR/.dulge_chroot_init -o "$DULGE_CHROOT_CMD" = "ethereal" ]; then
+        export CHROOT_READY=1
+    fi
+}
+
+check_native_arch() {
+    if [ "$CHROOT_READY" ]; then
+        if [ -s $DULGE_MASTERDIR/.dulge_chroot_init ]; then
+            export DULGE_ARCH=$(<$DULGE_MASTERDIR/.dulge_chroot_init)
+        else
+            export DULGE_ARCH=$(dulge-uhelper arch)
+        fi
+    else
+        export DULGE_ARCH="$DULGE_MACHINE"
+    fi
+}
+
+masterdir_zap() {
+    rm -rf "$DULGE_MASTERDIR"
+    mkdir -p "$DULGE_MASTERDIR"
+    msg_normal "dulge-src: $DULGE_MASTERDIR masterdir cleaned up.\n"
+}
+
+exit_func() {
+    wait
+    if [ "$sourcepkg" ]; then
+        remove_pkg $DULGE_CROSS_BUILD
+    fi
+    if [ -z "$IN_CHROOT" ]; then
+        msg_red "dulge-src: a failure has occurred! exiting...\n"
+    fi
+    exit 2
+}
+
+read_pkg() {
+    if [ -z "${DULGE_TARGET_PKG}" ]; then
+        [ ! -r ./template ] && msg_error "dulge-src: missing build template in $(pwd).\n"
+        DULGE_TARGET_PKG=${PWD##*/}
+    fi
+    setup_pkg "$DULGE_TARGET_PKG" "$DULGE_CROSS_BUILD" "$1"
+}
+
+setup_distfiles_mirror() {
+    local mirror_list="$1"
+    local mirror scheme path
+
+    # Scheme file:// mirror locations only work with uchroot
+    for mirror in $mirror_list; do
+        scheme="file"
+        if [[ "$mirror" == *://* ]]; then
+            scheme="${mirror%%://*}"
+            path="${mirror#${scheme}://}"
+        else
+            path="$mirror"
+        fi
+        [ "$scheme" != "file" ] && continue
+        if [ "$DULGE_CHROOT_CMD" == "uchroot" ]; then
+            if [ ! -d "$path" ]; then
+                msg_warn "dulge-src: Invalid path in DULGE_DISTFILES_MIRROR ($mirror)\n"
+                continue
+            fi
+            mkdir -p "$DULGE_MASTERDIR/$path"
+            DULGE_CHROOT_CMD_ARGS+=" -b $path:$path"
+        else
+            case "$DULGE_TARGET" in
+                fetch|extract|patch|configure|build|check|install|pkg|bootstrap|bootstrap-update|update-sys)
+                    msg_warn "dulge-src: File URLs ($mirror) don't work with '$DULGE_CHROOT_CMD'\n"
+            esac
+        fi
+    done
+}
+
+#
+# main()
+#
+readonly PROGNAME="${0##*/}"
+readonly DULGE_VERSION_REQ="0.60"
+DULGE_VERSION=$(dulge-uhelper -V)
+DULGE_VERSION=${DULGE_VERSION%%API*}
+DULGE_VERSION=${DULGE_VERSION##*:}
+readonly DULGE_SRC_VERSION="113"
+
+DULGE_OPTIONS=
+DULGE_OPTSTRING="1A:a:bc:CEfgGhH:iIj:Lm:No:p:qsQKr:tvV"
+
+# Preprocess arguments in order to allow options before and after DULGE_TARGET.
+eval set -- $(getopt "$DULGE_OPTSTRING" "$@");
+
+# Options are saved as DULGE_ARG_FOO instead of DULGE_FOO for now; this is
+# because configuration files may override those and we want arguments to
+# take precedence over configuration files
+while getopts "$DULGE_OPTSTRING" opt; do
+    case $opt in
+        1) DULGE_ARG_BUILD_ONLY_ONE_PKG=yes; DULGE_OPTIONS+=" -1";;
+        A) DULGE_ARG_MACHINE="$OPTARG"; DULGE_OPTIONS+=" -A $OPTARG";;
+        a) DULGE_ARG_CROSS_BUILD="$OPTARG"; DULGE_OPTIONS+=" -a $OPTARG";;
+        b) DULGE_ARG_IGNORE_BROKENNESS=yes; DULGE_OPTIONS+=" -b";;
+        c) DULGE_ARG_CONFIG="$OPTARG"; DULGE_OPTIONS+=" -c $OPTARG";;
+        C) DULGE_ARG_KEEP_ALL=1; DULGE_OPTIONS+=" -C";;
+        E) DULGE_ARG_BINPKG_EXISTS=1; DULGE_OPTIONS+=" -E";;
+        f) DULGE_ARG_BUILD_FORCEMODE=1; DULGE_OPTIONS+=" -f";;
+        G) DULGE_ARG_USE_GIT_REVS=1; DULGE_OPTIONS+=" -G";;
+        g) DULGE_ARG_DEBUG_PKGS=1; DULGE_OPTIONS+=" -g";;
+        H) DULGE_ARG_HOSTDIR="$OPTARG"; DULGE_OPTIONS+=" -H $OPTARG";;
+        h) usage && exit 0;;
+        i) DULGE_ARG_INFORMATIVE_RUN=1; DULGE_OPTIONS+=" -i";;
+        I) DULGE_ARG_SKIP_DEPS=1; DULGE_SKIP_REMOTEREPOS=1; DULGE_OPTIONS+=" -I -N";;
+        j) DULGE_ARG_MAKEJOBS="$OPTARG"; DULGE_OPTIONS+=" -j $OPTARG";;
+        L) export NOCOLORS=1; DULGE_OPTIONS+=" -L";;
+        m) DULGE_ARG_MASTERDIR="$OPTARG"; DULGE_OPTIONS+=" -m $OPTARG";;
+        N) DULGE_ARG_SKIP_REMOTEREPOS=1; DULGE_OPTIONS+=" -N";;
+        o) DULGE_ARG_PKG_OPTIONS="$OPTARG"; DULGE_OPTIONS+=" -o $OPTARG";;
+        p) DULGE_ARG_PRINT_VARIABLES="$OPTARG"; DULGE_OPTIONS+=" -p $OPTARG";;
+        q) DULGE_ARG_QUIET=1; DULGE_OPTIONS+=" -q";;
+        Q) DULGE_ARG_CHECK_PKGS=yes; DULGE_OPTIONS+=" -Q";;
+        K) DULGE_ARG_CHECK_PKGS=full; DULGE_OPTIONS+=" -K";;
+        r) DULGE_ARG_ALT_REPOSITORY="$OPTARG"; DULGE_OPTIONS+=" -r $OPTARG";;
+        s) DULGE_ARG_STRICT=yes; DULGE_OPTIONS+=" -s";;
+        t) DULGE_ARG_TEMP_MASTERDIR=1; DULGE_OPTIONS+=" -t -C";;
+        v) DULGE_ARG_VERBOSE=1; DULGE_OPTIONS+=" -v";;
+        V) echo "dulge-src-$DULGE_SRC_VERSION $(dulge-uhelper -V)" && exit 0;;
+        --) shift; break;;
+    esac
+done
+shift $(($OPTIND - 1))
+
+[ $# -eq 0 ] && usage && exit 1
+
+# Check if stdout is a tty; if false disable colors.
+test -t 1 || export NOCOLORS=1
+# http://no-color.org
+if [ "${NO_COLOR+x}" ]; then
+    export NOCOLORS=1
+fi
+
+# sane umask
+umask 022
+
+#
+# Check for required utilities in host system.
+#
+# Required utilities in host system for the bootstrap target.
+readonly REQHOST_UTILS_BOOTSTRAP="file objdump find make gawk bash sed gcc g++ gnat \
+    perl bsdtar gzip patch flock pkg-config"
+
+# Required utilities in host.
+readonly REQHOST_UTILS="dulge-install dulge-query dulge-rindex dulge-uhelper \
+    dulge-reconfigure dulge-remove dulge-create dulge-uchroot dulge-uunshare"
+
+check_reqhost_utils
+
+#
+# Set DULGE_CONFIG_FILE, DULGE_DISTDIR, DULGE_MASTERDIR
+# and DULGE_HOSTDIR.
+#
+if [ "$IN_CHROOT" ]; then
+    readonly DULGE_CONFIG_FILE=/etc/dulge/dulge-src.conf
+    readonly DULGE_DISTDIR=/Jaguar-Linux-packages
+    readonly DULGE_MASTERDIR=/
+    readonly DULGE_HOSTDIR=/host
+else
+    _distdir="$(readlink -f ${0%/*})"
+    if [ "${_distdir}" = "." ]; then
+        readonly DULGE_DISTDIR="$(pwd -P)"
+    else
+        readonly DULGE_DISTDIR="${_distdir}"
+    fi
+    # Read defaults and then the local configuration file
+    if [ -f $DULGE_DISTDIR/etc/defaults.conf ]; then
+        . $DULGE_DISTDIR/etc/defaults.conf
+    fi
+    if [ -n "$DULGE_ARG_CONFIG" -a -s $DULGE_DISTDIR/etc/conf.$DULGE_ARG_CONFIG ]; then
+        # If specified, read custom user configuration...
+        readonly DULGE_CONFIG_FILE=$DULGE_DISTDIR/etc/conf.$DULGE_ARG_CONFIG
+    elif [ -s $DULGE_DISTDIR/etc/conf ]; then
+        # ... otherwise read generic user configuration...
+        readonly DULGE_CONFIG_FILE=$DULGE_DISTDIR/etc/conf
+    elif [ -s ${XDG_CONFIG_HOME:-$HOME/.config}/dulge-src.conf ]; then
+        readonly DULGE_CONFIG_FILE=${XDG_CONFIG_HOME:-$HOME/.config}/dulge-src.conf
+    elif [ -s $HOME/.dulge-src.conf ]; then
+        # ... fallback to ~/.dulge-src.conf otherwise.
+        readonly DULGE_CONFIG_FILE=$HOME/.dulge-src.conf
+    fi
+fi
+# Read settings from config file
+[ -s "$DULGE_CONFIG_FILE" ] && . $DULGE_CONFIG_FILE &>/dev/null
+
+# show colors unconditionally in CI
+[ "$DULGE_BUILD_ENVIRONMENT" = Jaguar-Linux-packages-ci ] && export NOCOLORS=
+
+# Set options passed on command line, after configuration files have been read
+[ -n "$DULGE_ARG_BUILD_ONLY_ONE_PKG" ] && DULGE_BUILD_ONLY_ONE_PKG=yes
+[ -n "$DULGE_ARG_IGNORE_BROKENNESS" ] && DULGE_IGNORE_BROKENNESS=1
+[ -n "$DULGE_ARG_SKIP_REMOTEREPOS" ] && DULGE_SKIP_REMOTEREPOS=1
+[ -n "$DULGE_ARG_BUILD_FORCEMODE" ] && DULGE_BUILD_FORCEMODE=1
+[ -n "$DULGE_ARG_INFORMATIVE_RUN" ] && DULGE_INFORMATIVE_RUN=1
+[ -n "$DULGE_ARG_TEMP_MASTERDIR" ] && DULGE_TEMP_MASTERDIR=1
+[ -n "$DULGE_ARG_BINPKG_EXISTS" ] && DULGE_BINPKG_EXISTS=1
+[ -n "$DULGE_ARG_USE_GIT_REVS" ] && DULGE_USE_GIT_REVS=1
+[ -n "$DULGE_ARG_DEBUG_PKGS" ] && DULGE_DEBUG_PKGS=1
+[ -n "$DULGE_ARG_SKIP_DEPS" ] && DULGE_SKIP_DEPS=1
+[ -n "$DULGE_ARG_KEEP_ALL" ] && DULGE_KEEP_ALL=1
+[ -n "$DULGE_ARG_QUIET" ] && DULGE_QUIET=1
+[ -n "$DULGE_ARG_PRINT_VARIABLES" ] && DULGE_PRINT_VARIABLES="$DULGE_ARG_PRINT_VARIABLES"
+[ -n "$DULGE_ARG_ALT_REPOSITORY" ] && DULGE_ALT_REPOSITORY="$DULGE_ARG_ALT_REPOSITORY"
+[ -n "$DULGE_ARG_STRICT" ] && DULGE_STRICT="$DULGE_ARG_STRICT"
+[ -n "$DULGE_ARG_MACHINE" ] && DULGE_MACHINE="$DULGE_ARG_MACHINE"
+[ -n "$DULGE_ARG_CROSS_BUILD" ] && DULGE_CROSS_BUILD="$DULGE_ARG_CROSS_BUILD"
+[ -n "$DULGE_ARG_CHECK_PKGS" ] && DULGE_CHECK_PKGS="$DULGE_ARG_CHECK_PKGS"
+[ -n "$DULGE_ARG_MAKEJOBS" ] && DULGE_MAKEJOBS="$DULGE_ARG_MAKEJOBS"
+[ -n "$DULGE_ARG_VERBOSE" ] && DULGE_VERBOSE="$DULGE_ARG_VERBOSE"
+
+# Default to nproc for DULGE_MAKEJOBS if not set and nproc is available
+if command -v nproc >/dev/null ; then
+    : ${DULGE_MAKEJOBS:=$(nproc)}
+else
+    : ${DULGE_MAKEJOBS:=1}
+fi
+
+if [ -z "$DULGE_MACHINE" ]; then
+    DULGE_MACHINE=$(dulge-uhelper -C /dev/null arch)
+    # default to the same libc when -a is given but not -A
+    if [ -n "$DULGE_CROSS_BUILD" ]; then
+        if [ -z "${DULGE_CROSS_BUILD##*-musl}" ]; then
+            DULGE_MACHINE="${DULGE_MACHINE%-musl}-musl"
+        else
+            DULGE_MACHINE="${DULGE_MACHINE%-musl}"
+        fi
+    fi
+fi
+
+export DULGE_BUILD_ONLY_ONE_PKG DULGE_SKIP_REMOTEREPOS DULGE_BUILD_FORCEMODE \
+       DULGE_INFORMATIVE_RUN DULGE_TEMP_MASTERDIR DULGE_BINPKG_EXISTS \
+       DULGE_USE_GIT_REVS DULGE_CHECK_PKGS DULGE_DEBUG_PKGS DULGE_SKIP_DEPS \
+       DULGE_KEEP_ALL DULGE_QUIET DULGE_ALT_REPOSITORY DULGE_STRICT DULGE_CROSS_BUILD \
+       DULGE_MAKEJOBS DULGE_PRINT_VARIABLES DULGE_IGNORE_BROKENNESS DULGE_MACHINE
+
+# The masterdir/hostdir variables are forced and readonly in chroot
+if [ -z "$IN_CHROOT" ]; then
+    [ -n "$DULGE_ARG_MASTERDIR" ] && DULGE_MASTERDIR="$DULGE_ARG_MASTERDIR"
+    [ -n "$DULGE_ARG_HOSTDIR" ] && DULGE_HOSTDIR="$DULGE_ARG_HOSTDIR"
+
+    # Sanitize masterdir/hostdir once set for real (resolve links)
+    export DULGE_MASTERDIR="$(readlink -f $DULGE_MASTERDIR 2>/dev/null)"
+    export DULGE_HOSTDIR="$(readlink -f $DULGE_HOSTDIR 2>/dev/null)"
+fi
+
+# Forbid root unless DULGE_ALLOW_CHROOT_BREAKOUT is set
+# (for CI).
+if [ -z "$IN_CHROOT" -a "$UID" -eq 0 -a -z "$DULGE_ALLOW_CHROOT_BREAKOUT" ]; then
+    echo "ERROR: dulge-src cannot be used as root." 1>&2
+    exit 1
+fi
+
+# if DULGE_MASTERDIR unset, defaults to $DULGE_DISTDIR/masterdir-<host machine>
+# unless in a container for simplicity of container/CI usage
+if [ "$DULGE_CHROOT_CMD" = ethereal ]; then
+    : "${DULGE_MASTERDIR:=$DULGE_DISTDIR/masterdir}"
+elif [ -n "$DULGE_ARG_MASTERDIR" ]; then
+    : # Don't mess with masterdir in argv
+else
+    : "${DULGE_MASTERDIR:=$DULGE_DISTDIR/masterdir-$DULGE_MACHINE}"
+    # but use $DULGE_DISTDIR/masterdir if it exists and the new style doesn't
+    if [ ! -d "${DULGE_MASTERDIR}" ] && [ -r "${DULGE_DISTDIR}/masterdir/.dulge_chroot_init" ] \
+        && [ "$(cat "${DULGE_DISTDIR}/masterdir/.dulge_chroot_init")" = "$DULGE_MACHINE" ]; then
+        DULGE_MASTERDIR="${DULGE_DISTDIR}/masterdir"
+    fi
+fi
+[ ! -d "$DULGE_MASTERDIR" ] && mkdir -p "$DULGE_MASTERDIR"
+
+# if DULGE_HOSTDIR unset, defaults to $DULGE_DISTDIR/hostdir.
+: ${DULGE_HOSTDIR:=$DULGE_DISTDIR/hostdir}
+[ ! -d $DULGE_HOSTDIR ] && mkdir -p $DULGE_HOSTDIR
+
+if [ -d "$DULGE_MASTERDIR" -a ! -w "$DULGE_MASTERDIR" ]; then
+    echo "ERROR: can't write to masterdir $DULGE_MASTERDIR." 1>&2
+    exit 1
+fi
+
+# Try using chroot-git then git from the host system
+DULGE_GIT_CMD="$(PATH="/usr/libexec/chroot-git:$PATH:$DULGE_MASTERDIR/usr/libexec/chroot-git" command -v git 2>/dev/null)"
+if [ -n "$DULGE_GIT_CMD" ]; then
+    export DULGE_GIT_CMD
+elif [ -z "$DULGE_USE_BUILD_MTIME" ] || [ "$DULGE_USE_GIT_REVS" ]; then
+    echo "neither chroot-git or git are available in your system!" 1>&2
+    exit 1
+else
+    unset DULGE_GIT_CMD
+fi
+
+if [ -n "$DULGE_HOSTDIR" ]; then
+    export DULGE_REPOSITORY=$DULGE_HOSTDIR/binpkgs
+    readonly DULGE_SRCDISTDIR=$DULGE_HOSTDIR/sources
+else
+    export DULGE_REPOSITORY=$DULGE_MASTERDIR/host/binpkgs
+    readonly DULGE_SRCDISTDIR=$DULGE_MASTERDIR/host/sources
+fi
+
+# Set DULGE_REPOSITORY to our current branch.
+if [ -z "$DULGE_ALT_REPOSITORY" ]; then
+    pushd "$PWD" &>/dev/null
+    cd $DULGE_DISTDIR
+    _gitbranch="$($DULGE_GIT_CMD symbolic-ref --short HEAD 2>/dev/null)"
+    if [ "${_gitbranch}" -a "${_gitbranch}" != "master" ]; then
+        export DULGE_ALT_REPOSITORY="${_gitbranch}"
+        export DULGE_REPOSITORY="${DULGE_REPOSITORY}/${_gitbranch}"
+     fi
+     popd &>/dev/null
+else
+    export DULGE_REPOSITORY="${DULGE_REPOSITORY}/${DULGE_ALT_REPOSITORY}"
+fi
+
+readonly DULGE_SRCPKGDIR=$DULGE_DISTDIR/srcpkgs
+readonly DULGE_COMMONDIR=$DULGE_DISTDIR/common
+readonly DULGE_SHUTILSDIR=$DULGE_COMMONDIR/dulge-src/shutils
+readonly DULGE_TRIGGERSDIR=$DULGE_SRCPKGDIR/dulge-triggers/files
+readonly DULGE_CROSSPFDIR=$DULGE_COMMONDIR/cross-profiles
+readonly DULGE_BUILDSTYLEDIR=$DULGE_COMMONDIR/build-style
+readonly DULGE_LIBEXECDIR=$DULGE_COMMONDIR/dulge-src/libexec
+readonly DULGE_BUILDHELPERDIR=$DULGE_COMMONDIR/build-helper
+
+readonly DULGE_TARGET="$1"
+if [ "$2" ]; then
+    DULGE_TARGET_PKG="${2##*/}"
+fi
+
+# Check for CHROOT_READY and set up DULGE_ARCH environment var for dulge.
+chroot_check
+check_native_arch
+
+# test if to use linux32 for 32-bit masterdirs in 64-bit environments
+# x86_64, ppc64 (BE) and aarch64 are capable of this, others are not
+linux32_check() {
+    local hostarch="$1"
+    local tgtarch="$2"
+    case "$hostarch" in
+        x86_64*) if [[ "$tgtarch" == i686* ]]; then return 0; fi ;;
+        ppc64le*) if [[ "$tgtarch" == ppcle* ]]; then return 0; fi ;;
+        ppc64*)
+            case "$tgtarch" in
+                ppc64*) return 1 ;;
+                ppc*) return 0 ;;
+            esac
+            ;;
+        aarch64*) if [[ "$tgtarch" == armv* ]]; then return 0; fi ;;
+    esac
+    return 1
+}
+
+# Reconfigure pkgs for 32bit on 64-bit systems and reexec itself.
+if [ -z "$DULGE_REINIT" -a -s $DULGE_MASTERDIR/.dulge_chroot_init ]; then
+    export DULGE_ARCH=${DULGE_ARCH:-$(<$DULGE_MASTERDIR/.dulge_chroot_init)}
+    if linux32_check "$DULGE_MACHINE" "$DULGE_ARCH"; then
+        # reconfigure pkgs via linux32
+        linux32 dulge-reconfigure -r ${DULGE_MASTERDIR} -a &>/dev/null
+        # reexec itself via linux32
+        export DULGE_REINIT=1
+        exec linux32 $0 ${DULGE_OPTIONS} "$@"
+    fi
+fi
+if [ -n "$DULGE_ARCH" ]; then
+    export DULGE_MACHINE=$DULGE_ARCH
+fi
+# At this point if DULGE_TARGET_MACHINE isn't defined we assume
+# it's a native build.
+if [ -z "$DULGE_TARGET_MACHINE" ]; then
+        export DULGE_TARGET_MACHINE=$DULGE_MACHINE
+fi
+
+if [ "$IN_CHROOT" ]; then
+    readonly DULGE_UHELPER_CMD="dulge-uhelper"
+    readonly DULGE_INSTALL_CMD="dulge-install -c /host/repocache-$DULGE_MACHINE"
+    readonly DULGE_QUERY_CMD="dulge-query -c /host/repocache-$DULGE_MACHINE"
+    readonly DULGE_RECONFIGURE_CMD="dulge-reconfigure"
+    readonly DULGE_REMOVE_CMD="dulge-remove"
+    readonly DULGE_CHECKVERS_CMD="dulge-checkvers"
+    readonly DULGE_DESTDIR=/destdir
+    readonly DULGE_BUILDDIR=/builddir
+else
+    readonly DULGE_UHELPER_CMD="dulge-uhelper -r $DULGE_MASTERDIR"
+    readonly DULGE_INSTALL_CMD="dulge-install -c $DULGE_HOSTDIR/repocache-$DULGE_MACHINE -r $DULGE_MASTERDIR -C etc/dulge.d"
+    readonly DULGE_QUERY_CMD="dulge-query -c $DULGE_HOSTDIR/repocache-$DULGE_MACHINE -r $DULGE_MASTERDIR -C etc/dulge.d"
+    readonly DULGE_RECONFIGURE_CMD="dulge-reconfigure -r $DULGE_MASTERDIR"
+    readonly DULGE_REMOVE_CMD="dulge-remove -r $DULGE_MASTERDIR"
+    readonly DULGE_CHECKVERS_CMD="dulge-checkvers -r $DULGE_MASTERDIR"
+    readonly DULGE_DESTDIR=$DULGE_MASTERDIR/destdir
+    readonly DULGE_BUILDDIR=$DULGE_MASTERDIR/builddir
+fi
+readonly DULGE_RINDEX_CMD="dulge-rindex"
+readonly DULGE_FETCH_CMD="dulge-fetch"
+readonly DULGE_DIGEST_CMD="dulge-digest"
+readonly DULGE_CMPVER_CMD="dulge-uhelper cmpver"
+
+export DULGE_SHUTILSDIR DULGE_CROSSPFDIR DULGE_TRIGGERSDIR \
+    DULGE_SRCPKGDIR DULGE_COMMONDIR DULGE_BUILDDIR \
+    DULGE_REPOSITORY DULGE_ALT_REPOSITORY DULGE_STRICT DULGE_SRCDISTDIR DULGE_DIGEST_CMD \
+    DULGE_UHELPER_CMD DULGE_INSTALL_CMD DULGE_QUERY_CMD DULGE_BUILD_ONLY_ONE_PKG \
+    DULGE_RINDEX_CMD DULGE_RECONFIGURE_CMD DULGE_REMOVE_CMD DULGE_CHECKVERS_CMD \
+    DULGE_CMPVER_CMD DULGE_FETCH_CMD DULGE_VERSION DULGE_BUILDSTYLEDIR \
+    DULGE_CPPFLAGS DULGE_CFLAGS DULGE_CXXFLAGS DULGE_FFLAGS DULGE_LDFLAGS \
+    DULGE_MAKEJOBS DULGE_BUILD_FORCEMODE DULGE_USE_GIT_REVS DULGE_DEBUG_PKGS \
+    DULGE_CHECK_PKGS DULGE_CCACHE DULGE_DISTCC DULGE_DISTCC_HOSTS DULGE_SKIP_DEPS \
+    DULGE_SKIP_REMOTEREPOS DULGE_CROSS_BUILD DULGE_ARG_PKG_OPTIONS DULGE_CONFIG_FILE \
+    DULGE_KEEP_ALL DULGE_HOSTDIR DULGE_MASTERDIR DULGE_SRC_VERSION \
+    DULGE_DESTDIR DULGE_MACHINE DULGE_TEMP_MASTERDIR DULGE_BINPKG_EXISTS \
+    DULGE_LIBEXECDIR DULGE_DISTDIR DULGE_DISTFILES_MIRROR DULGE_ALLOW_RESTRICTED \
+    DULGE_USE_GIT_COMMIT_DATE DULGE_PKG_COMPTYPE DULGE_REPO_COMPTYPE \
+    DULGE_BUILDHELPERDIR DULGE_USE_BUILD_MTIME DULGE_BUILD_ENVIRONMENT \
+    DULGE_PRESERVE_PKGS DULGE_IGNORE_BROKENNESS DULGE_DISTFILES_FALLBACK
+
+for i in REPOSITORY DESTDIR BUILDDIR SRCDISTDIR; do
+    eval val="\$DULGE_$i"
+    if [ ! -d "$val" ]; then
+        mkdir -p $val
+    fi
+    unset val
+done
+
+# A temporary masterdir requires dulge-uchroot(1) and -O to use overlayfs
+# on tmpfs (available with dulge-0.45).
+if [ -z "$IN_CHROOT" -a -n "$DULGE_TEMP_MASTERDIR" ]; then
+    export DULGE_CHROOT_CMD="uchroot"
+    export DULGE_CHROOT_CMD_ARGS+=" -O"
+fi
+#
+# Sanitize PATH.
+#
+if [ -z "$IN_CHROOT" ]; then
+    # In non chroot case always prefer host tools.
+    export PATH="$PATH:$DULGE_MASTERDIR/usr/bin"
+fi
+
+#
+# Set up ccache
+#
+if [ "$DULGE_CCACHE" ]; then
+    export CCACHEPATH="/usr/lib/ccache/bin"
+    export CCACHE_DIR="$DULGE_HOSTDIR/ccache"
+    # A jaguar not using cached files just due to compiler mtime
+    # changes when e.g. bootstrapping
+    export CCACHE_COMPILERCHECK=content CCACHE_COMPRESS=1
+    export PATH="$CCACHEPATH:$PATH"
+    mkdir -p $CCACHE_DIR
+fi
+
+#
+# Set up distcc
+#
+if [ "$DULGE_DISTCC" ]; then
+    if [ "$DULGE_CCACHE" ]; then
+        export CCACHE_PREFIX="/usr/bin/distcc"
+    else
+        DISTCCPATH="/usr/lib/distcc/bin"
+        export PATH="$DISTCCPATH:$PATH"
+    fi
+    export DISTCC_DIR="$DULGE_HOSTDIR/distcc-${DULGE_CROSS_BUILD:-${DULGE_MACHINE}}"
+    export DISTCC_HOSTS="$DULGE_DISTCC_HOSTS"
+    mkdir -p $DISTCC_DIR
+fi
+
+check_build_requirements
+
+#
+# Read funcs from helpers
+#
+for f in ${DULGE_SHUTILSDIR}/*.sh; do
+    [ -r "$f" ] && . $f
+done
+
+if [ -z "$IN_CHROOT" ]; then
+    trap 'exit_func' INT TERM
+    if [ -n "$DULGE_DISTFILES_MIRROR" ]; then
+        setup_distfiles_mirror "$DULGE_DISTFILES_MIRROR"
+    fi
+    if [ -n "$DULGE_DISTFILES_FALLBACK" ]; then
+        setup_distfiles_mirror "$DULGE_DISTFILES_FALLBACK"
+    fi
+fi
+
+reconfigure_base_chroot
+
+#
+# Main switch.
+#
+case "$DULGE_TARGET" in
+    binary-bootstrap)
+        if [ -n "$DULGE_TARGET_PKG" ]; then
+            msg_error "dulge-src: binary-bootstrap <arch> is no longer supported, use '-A <arch>' instead\n"
+            exit 1
+        fi
+        install_base_chroot "$DULGE_MACHINE"
+        ;;
+    bootstrap)
+        if [ -n "$DULGE_CHECK_PKGS" ]; then
+            msg_error "dulge-src: disable tests for bootstrap\n"
+            exit 1
+        fi
+        if [ -n "$DULGE_TARGET_PKG" ]; then
+            msg_error "dulge-src: bootstrap <arch> is no longer supported, use '-A <arch>' instead\n"
+            exit 1
+        fi
+        # base-chroot building on host
+        # check for required host utils
+        check_reqhost_utils bootstrap
+        (
+            export DULGE_ARCH=$DULGE_MACHINE
+            export DULGE_SKIP_REMOTEREPOS=1
+            chroot_sync_repodata
+            $DULGE_LIBEXECDIR/build.sh \
+                base-chroot base-chroot $DULGE_TARGET || exit 1
+        ) || exit 1
+        [ -d $DULGE_MASTERDIR ] && rm -rf $DULGE_MASTERDIR
+        install_base_chroot "$DULGE_MACHINE"
+        ;;
+    bootstrap-update)
+        if [ -n "$CHROOT_READY" -a -z "$IN_CHROOT" ]; then
+            chroot_handler bootstrap-update
+        else
+            chroot_sync_repodata
+            update_base_chroot
+        fi
+        ;;
+    chroot)
+        chroot_sync_repodata
+        chroot_handler chroot dummy
+        ;;
+    clean)
+        if [ -z "$DULGE_TARGET_PKG" ]; then
+            if [ -n "$CHROOT_READY" -a -z "$IN_CHROOT" ]; then
+                chroot_handler remove-autodeps
+            else
+                remove_pkg_autodeps
+            fi
+            msg_normal "dulge-src: cleaning up masterdir...\n"
+            # Needed to remove Go Modules
+            [ -d "$DULGE_BUILDDIR" ] && chmod -R +wX $DULGE_BUILDDIR
+            rm -rf \
+                $DULGE_BUILDDIR \
+                $DULGE_DESTDIR
+            rm -rf $DULGE_MASTERDIR/tmp
+            mkdir -p $DULGE_MASTERDIR/tmp
+        else
+            read_pkg
+            if [ -n "$CHROOT_READY" -a -z "$IN_CHROOT" ]; then
+                chroot_handler $DULGE_TARGET $DULGE_TARGET_PKG || exit $?
+            else
+                if declare -f do_clean >/dev/null; then
+                    run_func do_clean
+                fi
+                remove_pkg_wrksrc
+                remove_pkg_statedir
+            fi
+            remove_pkg $DULGE_CROSS_BUILD
+        fi
+        ;;
+    clean-repocache)
+        export DULGE_TARGET_ARCH="${DULGE_CROSS_BUILD:-$DULGE_TARGET_MACHINE}"
+        $DULGE_REMOVE_CMD -C /dev/null -c $DULGE_HOSTDIR/repocache-${DULGE_TARGET_ARCH} -O
+        ;;
+    consistency-check)
+        consistency_check
+        ;;
+    remove-autodeps)
+        if [ -n "$CHROOT_READY" -a -z "$IN_CHROOT" ]; then
+            chroot_handler remove-autodeps
+        else
+            remove_pkg_autodeps
+        fi
+        ;;
+    fetch|extract|patch|configure|build|check|install|pkg)
+        if [ "$DULGE_TARGET" = "check" ] && [ -z "$DULGE_CHECK_PKGS" ]; then
+            export DULGE_CHECK_PKGS=full
+        fi
+        read_pkg
+        if [ -n "$CHROOT_READY" -a -z "$IN_CHROOT" ]; then
+            chroot_handler $DULGE_TARGET $DULGE_TARGET_PKG
+        else
+            check_existing_pkg
+            chroot_sync_repodata
+            # prevent update_base_chroot from removing the builddir/destdir
+            update_base_chroot keep-all-force
+            $DULGE_LIBEXECDIR/build.sh $DULGE_TARGET_PKG $DULGE_TARGET_PKG \
+                $DULGE_TARGET $DULGE_CROSS_BUILD || exit $?
+        fi
+        ;;
+    remove|remove-destdir)
+        read_pkg
+        remove_pkg $DULGE_CROSS_BUILD
+        ;;
+    list)
+        $DULGE_QUERY_CMD -l
+        ;;
+    purge-distfiles)
+        purge_distfiles
+        ;;
+    show)
+        read_pkg ignore-problems
+        show_pkg $DULGE_PRINT_VARIABLES
+        ;;
+    show-avail)
+        read_pkg &>/dev/null
+        show_avail
+        ;;
+    show-files)
+        read_pkg ignore-problems
+        show_pkg_files
+        ;;
+    show-deps)
+        read_pkg ignore-problems
+        show_pkg_deps
+        ;;
+    show-build-deps)
+        read_pkg ignore-problems
+        show_pkg_build_deps
+        ;;
+    show-hostmakedepends)
+        read_pkg ignore-problems
+        show_pkg_hostmakedepends
+        ;;
+    show-makedepends)
+        read_pkg ignore-problems
+        show_pkg_makedepends
+        ;;
+    show-checkdepends)
+        read_pkg ignore-problems
+        show_pkg_checkdepends
+        ;;
+    show-pkg-var-dump)
+        read_pkg ignore-problems
+        for sub_name in $subpackages; do
+            if [ $sub_name = $DULGE_TARGET_PKG ]; then
+                . ${DULGE_COMMONDIR}/environment/setup-subpkg/subpkg.sh
+                ${sub_name}_package
+            fi
+        done
+        printf "archs: %s\n\n" "$archs"
+        printf "bootstrap: %s\n\n" "$bootstrap"
+        printf "broken: %s\n\n" "$broken"
+        printf "depends: %s\n\n" "$depends"
+        printf "hostmakedepends: %s\n\n" "$hostmakedepends"
+        printf "makedepends: %s\n\n" "$makedepends"
+        printf "nocross: %s\n\n" "$nocross"
+        printf "pkgname: %s\n\n" "$pkgname"
+        printf "restricted: %s\n\n" "$restricted"
+        printf "revision: %s\n\n" "$revision"
+        printf "subpackages: %s\n\n" "$subpackages"
+        printf "version: %s\n\n" "$version"
+        printf "provides: %s\n\n" "$provides"
+        printf "lib32disabled: %s\n\n" "$lib32disabled"
+        printf "nodebug: %s\n\n" "$nodebug"
+        ;;
+    show-pkg-var)
+        read_pkg ignore-problems
+        for sub_name in $subpackages; do
+            if [ $sub_name = $DULGE_TARGET_PKG ]; then
+                . ${DULGE_COMMONDIR}/environment/setup-subpkg/subpkg.sh
+                ${sub_name}_package
+            fi
+        done
+        while IFS= read -r pkg_var; do
+                print_var=
+                case "${pkg_var}" in
+                    archs) print_var="$archs ";;
+                    bootstrap) print_var="$bootstrap ";;
+                    broken) print_var="$broken ";;
+                    depends) print_var="$depends ";;
+                    hostmakedepends) print_var="$hostmakedepends ";;
+                    makedepends) print_var="$makedepends ";;
+                    nocross) print_var="$nocross ";;
+                    pkgname) print_var="$pkgname ";;
+                    restricted) print_var="$restricted ";;
+                    revision) print_var="$revision ";;
+                    subpackages) print_var="$subpackages ";;
+                    version) print_var="$version ";;
+                    provides) print_var="$provides ";;
+                    lib32disabled) print_var="$lib32disabled ";;
+                    nodebug) print_var="$nodebug ";;
+                esac # the space at the end of each is essential for unset vars
+                if [ -n "$print_var" ]; then
+                        printf "%s\n" "$(printf "${print_var% }" | tr -t '\n\r' ' ')"
+                fi # The trailing space gets stripped before printing anyway
+        done
+        ;;
+    dbulk-dump)
+        read_pkg
+        check_pkg_arch "$DULGE_CROSS_BUILD"
+        for x in pkgname version revision; do
+            printf '%s: %s\n' "$x" "${!x}"
+        done
+        for x in bootstrap; do
+            [[ ${!x} ]] && printf '%s: %s\n' "$x" "${!x}"
+        done
+        for x in hostmakedepends makedepends; do
+            arr=(${!x})
+            if [[ ${#arr} -gt 0 ]]; then
+                printf '%s:\n' "$x"
+                printf ' %s\n' "${arr[@]}"
+            fi
+        done
+        _cleandeps=$(setup_pkg_depends "" 1 1 | { grep -vF "$(printf "%s\n" $pkgname $subpackages)" || :; } | sort -u) || exit 1
+        if [[ $_cleandeps ]]; then
+                printf 'depends:\n'
+                printf ' %s\n' $_cleandeps
+        fi
+        if [[ $subpackages ]]; then
+            printf 'subpackages:\n'
+            printf ' %s\n' $subpackages
+        fi
+        ;;
+    show-options)
+        read_pkg ignore-problems
+        show_pkg_build_options
+        ;;
+    show-shlib-provides)
+        read_pkg ignore-problems
+        show_pkg_shlib_provides
+        ;;
+    show-shlib-requires)
+        read_pkg ignore-problems
+        show_pkg_shlib_requires
+        ;;
+    show-var)
+        for f in ${DULGE_COMMONDIR}/environment/setup/*.sh; do
+            source $f
+        done
+        if [ "$DULGE_CROSS_BUILD" ]; then
+            source ${DULGE_COMMONDIR}/cross-profiles/${DULGE_CROSS_BUILD}.sh
+        else
+            source ${DULGE_COMMONDIR}/build-profiles/${DULGE_MACHINE}.sh
+        fi
+        eval value="\${$DULGE_TARGET_PKG}"
+        echo $value
+        ;;
+    show-repo-updates)
+        bulk_build
+        ;;
+    show-sys-updates)
+        bulk_build installed
+        ;;
+    show-local-updates)
+        bulk_build local
+        ;;
+    sort-dependencies)
+        bulk_sortdeps ${@/$DULGE_TARGET/}
+        ;;
+    update-bulk)
+        bulk_update
+        ;;
+    update-sys)
+        bulk_update installed
+        ;;
+    update-local)
+        bulk_update local
+        ;;
+    update-check)
+        read_pkg ignore-problems
+        update_check
+        ;;
+    update-hash-cache)
+        update_hash_cache
+        ;;
+    zap)
+        masterdir_zap
+        ;;
+    *)
+        msg_red "dulge-src: invalid target $DULGE_TARGET.\n"
+        usage && exit 1
+        ;;
+esac
+
+exit_and_cleanup $?

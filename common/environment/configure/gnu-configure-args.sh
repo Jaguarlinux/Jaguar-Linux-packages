@@ -1,0 +1,77 @@
+# This file sets up configure_args with common settings.
+
+if [ -n "$build_style" -a "$build_style" != "gnu-configure" ]; then
+	return 0
+fi
+
+# Store args from template so they can be included last and override
+# our defaults
+TEMPLATE_CONFIGURE_ARGS="${configure_args}"
+
+export configure_args="--prefix=/usr --sysconfdir=/etc --sbindir=/usr/bin --bindir=/usr/bin
+ --mandir=/usr/share/man --infodir=/usr/share/info --localstatedir=/var"
+
+. ${DULGE_COMMONDIR}/build-profiles/${DULGE_MACHINE}.sh
+export configure_args+=" --host=$DULGE_TRIPLET --build=$DULGE_TRIPLET"
+
+# Always use wordsize-specific libdir even though the real path is lib
+# This is to make sure 32-bit and 64-bit libs can coexist when looking
+# up things (the opposite-libdir is always symlinked as libNN)
+export configure_args+=" --libdir=\${exec_prefix}/lib${DULGE_TARGET_WORDSIZE}"
+
+_AUTOCONFCACHEDIR=${DULGE_COMMONDIR}/environment/configure/autoconf_cache
+
+# From now on all vars are exported to the environment
+set -a
+
+# Read autoconf cache variables for native target.
+case "$DULGE_TARGET_MACHINE" in
+	# musl libc
+	*-musl) . ${_AUTOCONFCACHEDIR}/musl-linux
+		;;
+esac
+
+# Cross compilation vars
+if [ -z "$CROSS_BUILD" ]; then
+	export configure_args+=" ${TEMPLATE_CONFIGURE_ARGS}"
+	unset TEMPLATE_CONFIGURE_ARGS
+
+	set +a
+	return 0
+fi
+
+export configure_args+=" --host=$DULGE_CROSS_TRIPLET --with-sysroot=$DULGE_CROSS_BASE --with-libtool-sysroot=$DULGE_CROSS_BASE "
+
+export configure_args+=" ${TEMPLATE_CONFIGURE_ARGS}"
+unset TEMPLATE_CONFIGURE_ARGS
+
+# Read autoconf cache variables for cross target (taken from OE).
+case "$DULGE_TARGET_MACHINE" in
+	# musl libc
+	*-musl) . ${_AUTOCONFCACHEDIR}/common-linux
+		. ${_AUTOCONFCACHEDIR}/musl-linux
+		;;
+	# gnu libc
+	*)	. ${_AUTOCONFCACHEDIR}/common-linux
+		. ${_AUTOCONFCACHEDIR}/common-glibc
+		;;
+esac
+
+# Read apropiate autoconf cache files for target machine.
+case "$DULGE_TARGET_MACHINE" in
+
+	i686*)	. ${_AUTOCONFCACHEDIR}/endian-little
+		. ${_AUTOCONFCACHEDIR}/ix86-common
+		;;
+
+	x86_64*)
+		. ${_AUTOCONFCACHEDIR}/endian-little
+		. ${_AUTOCONFCACHEDIR}/x86_64-linux
+		;;
+
+	*) ;;
+esac
+
+unset _AUTOCONFCACHEDIR
+
+set +a # vars are not exported to the environment anymore
