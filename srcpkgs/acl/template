@@ -6,5 +6,5 @@ short_desc=" The Acl package contains utilities to administer Access Control Lis
 maintainer="TigerClips1 <spongebob1966@proton.me>"
 license="LGPL"
 homepage="https://savannah.nongnu.org/projects/acl"
-distfiles="https://download.savannah.nongnu.org/releases/acl/acl-${version.tar.xz"
+distfiles="https://download.savannah.nongnu.org/releases/acl/acl-${version}.tar.xz"
 checksum="590765dee95907dbc3c856f7255bd669"
