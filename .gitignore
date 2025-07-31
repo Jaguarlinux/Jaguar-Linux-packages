@@ -3,7 +3,7 @@
 *~
 \#*#
 
-# exclude everything in root except files and directories from void-packages
+# exclude everything in root except files and directories from Jaguar-Linux-packages
 /*
 !/.editorconfig
 !/.gitattributes
