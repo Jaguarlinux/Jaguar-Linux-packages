@@ -57,7 +57,7 @@ methods.
 Clone the `Jaguar-Linux-packages` git repository and install the bootstrap packages:
 
 ```
-$ git clone https://github.com/void-linux/Jaguar-Linux-packages.git
+$ git clone https://github.com/JaguarLinux/Jaguar-Linux-packages.git
 $ cd Jaguar-Linux-packages
 $ ./dulge-src binary-bootstrap
 ```
@@ -126,7 +126,7 @@ executable must be `setgid`:
     # chmod 4750 dulge-uchroot
     # usermod -a -G <group> <user>
 
-> NOTE: by default in void you shouldn't do this manually, your user must be a member of
+> NOTE: by default in Jaguar  you shouldn't do this manually, your user must be a member of
 the `xbuilder` group.
 
 To enable it:
@@ -161,7 +161,7 @@ or from your local repository.
 There is also the `bootstrap` command, which will build all necessary `bootstrap` packages from
 scratch. This is usually not recommended, since those packages are built using your host system's
 toolchain and are neither fully featured nor reproducible (your host system may influence the
-build) and thus should only be used as a stage 0 for bootstrapping new Void systems.
+build) and thus should only be used as a stage 0 for bootstrapping new Jaguar systems.
 
 If you still choose to use `bootstrap`, use the resulting stage 0 container to rebuild all
 `bootstrap` packages again, then use `binary-bootstrap` (stage 1) and rebuild the `bootstrap`
@@ -256,7 +256,7 @@ By default **dulge-src** will try to resolve package dependencies in this order:
  - If a dependency exists in a remote repository, use it.
  - If a dependency exists in a source package, use it.
 
-It is possible to avoid using remote repositories completely by using the `-N` flag.
+It is possible to a JaguarLinux using remote repositories completely by using the `-N` flag.
 
 > The default local repository may contain multiple *sub-repositories*: `debug`, `multilib`, etc.
 
@@ -285,7 +285,7 @@ The build options can also be shown for binary packages via `dulge-query(1)`:
     $ dulge-query -R --property=build-options foo
 
 > NOTE: if you build a package with a custom option, and that package is available
-in an official void repository, an update will ignore those options. Put that package
+in an official Jaguar repository, an update will ignore those options. Put that package
 on `hold` mode via `dulge-pkgdb(1)`, i.e `dulge-pkgdb -m hold foo` to ignore updates
 with `dulge-install -u`. Once the package is on `hold`, the only way to update it
 is by declaring it explicitly: `dulge-install -u foo`.
@@ -346,7 +346,7 @@ in `etc/repo-keys/` to prevent dulge-src from prompting to import that key.
 
 Packages are overwritten on every build to make getting package with changed build options easy.
 To make dulge-src skip build and preserve first package build with given version and revision,
-same as in official void repository, set `DULGE_PRESERVE_PKGS=yes` in `etc/conf` file.
+same as in official Jaguar repository, set `DULGE_PRESERVE_PKGS=yes` in `etc/conf` file.
 
 Reinstalling a package in your target `rootdir` can be easily done too:
 
