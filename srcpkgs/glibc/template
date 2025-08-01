@@ -4,7 +4,7 @@ version=2.41
 revision=1
 bootstrap=yes
 short_desc="GNU C library"
-maintainer="TigerClips1 <spongebob1966@proton.me>"
+maintainer="TigerClips1<spongebob1966@proton.me>"
 license="GPL-2.0-or-later, LGPL-2.1-or-later, BSD-3-Clause"
 homepage="http://www.gnu.org/software/libc"
 distfiles="${GNU_SITE}/libc/glibc-${version}.tar.xz"
@@ -55,6 +55,10 @@ fi
 makedepends="kernel-libc-headers"
 lib32files="/usr/lib/gconv/gconv-modules /usr/lib/gconv/gconv-modules.d"
 lib32symlinks="ld-linux.so.2"
+archs="~*-musl"
+if [ "$DULGE_TARGET_LIBC" = musl ]; then
+	broken="no point in building this for musl"
+fi
 
 do_configure() {
 	mkdir build
@@ -72,6 +76,8 @@ do_configure() {
 		# Build with -mno-tls-direct-seg-refs to avoid performance
 		# problems with Xen on x86 32bit.
 		i686) export CFLAGS+=" -mno-tls-direct-seg-refs";;
+		# Force soft float ABI on armv5.
+		armv5*) configure_args+=" --without-fp";;
 	esac
 
 	if [ "$CROSS_BUILD" ]; then
@@ -153,12 +159,23 @@ do_install() {
 	# ldd is a bash script, so make it run as such.
 	replace_interpreter bash ${DESTDIR}/usr/bin/ldd
 
+	# wrong 32bit dynamic linker when using elfv2 ABI
+	case "$DULGE_TARGET_MACHINE" in
+		ppc64*)
+			vsed -i '/RTLDLIST=/s/ld.so.2/ld.so.1/g' \
+				${DESTDIR}/usr/bin/ldd
+			;;
+	esac
 
 	install -d ${DESTDIR}/etc/ld.so.conf.d
 	echo "/usr/local/lib" > ${DESTDIR}/etc/ld.so.conf.d/usr_local.conf
 	chmod 644 ${DESTDIR}/etc/ld.so.conf.d/usr_local.conf
 	rm -f ${DESTDIR}/etc/ld.so.cache
 
+	# Create ld-linux.so.3 symlink for ARM.
+	case "$DULGE_TARGET_MACHINE" in
+		armv?l) ln -sfr ${DESTDIR}/usr/lib/ld-linux-armhf.so.3 ${DESTDIR}/usr/lib/ld-linux.so.3;;
+	esac
 
 	vinstall posix/gai.conf 644 etc
 	rm -rf ${DESTDIR}/var/db
