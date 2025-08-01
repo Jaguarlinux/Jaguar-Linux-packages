@@ -1,0 +1,7 @@
+NAME="Jaguar Linux"
+VERSION="1.0-systemd"
+ID=jaguar
+PRETTY_NAME="Jaguar Linux 1.0-systemd"
+VERSION_CODENAME="CyberGamerX"
+HOME_URL="https://ps4jaguarlinux.site/"
+RELEASE_TYPE="Stable-Systemd"
