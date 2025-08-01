@@ -35,7 +35,7 @@ case $(uname -m) in
 esac
 
 # Populate 32-bit lib files on 64-bit glibc systems, for multilib.
-	if [ "${XBPS_TARGET_WORDSIZE}" = "64" ] && [ "${XBPS_TARGET_LIBC}" = "glibc" ]; then
+	if [ "${DULGE_TARGET_WORDSIZE}" = "64" ] && [ "${DULGE_TARGET_LIBC}" = "glibc" ]; then
 		vmkdir usr/lib32
 		ln -snrf "${DESTDIR}/usr/lib32" "${DESTDIR}/lib32"
 		ln -sf ../lib/locale "${DESTDIR}/usr/lib32/locale"
