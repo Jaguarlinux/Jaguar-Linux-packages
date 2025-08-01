@@ -2,7 +2,7 @@
 pkgname=linux-firmware
 version=20250708
 revision=1
-hostmakedepends="rdfind which  python3 $(vopt_if compressed zstd)"
+hostmakedepends="rdfind which $(vopt_if compressed zstd)"
 depends="linux-firmware-amd>=${version}_${revision} linux-firmware-network>=${version}_${revision}"
 short_desc="Binary firmware blobs for the Linux kernel"
 maintainer="TigerClips1 <spongebob1966@proton.me>"
