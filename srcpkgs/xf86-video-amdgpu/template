@@ -1,0 +1,22 @@
+# Template file for 'xf86-video-amdgpu'
+pkgname=xf86-video-amdgpu
+version=23.0.0
+revision=1
+build_style=gnu-configure
+hostmakedepends="pkg-config"
+makedepends="xorgproto eudev-libudev-devel libpciaccess-devel libdrm-devel
+ pixman-devel MesaLib-devel xorg-server-devel xorg-util-macros"
+depends="virtual?xserver-abi-video-25_1 mesa-dri"
+short_desc="Xorg AMD Radeon RXXX video driver (amdgpu kernel module)"
+maintainer="TigerClips1 <spongebob1966@proton.me>"
+license="MIT"
+homepage="https://wiki.freedesktop.org/xorg"
+distfiles="https://github.com/Jaguarlinux/ps4linux-xorg/archive/refs/tags/ps4-xorg-stable.tar.gz"
+checksum=4f04f0ea66f3ced0dcc58f617409860163a19c4e8c285cfb5285f36ba09cc061
+
+lib32disabled=yes
+LDFLAGS="-Wl,-z,lazy"
+
+post_install() {
+	vlicense COPYING
+}
