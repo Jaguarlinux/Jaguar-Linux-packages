@@ -1,6 +1,9 @@
-# Begin /etc/hosts
-::1       ip6-localhost ip6-loopback
-ff02::1   ip6-allnodes
-ff02::2   ip6-allrouters
+#
+# /etc/hosts: static lookup table for host names
+#
 
-# End /etc/hosts
+#<ip-address>		<hostname.domain.org>	<hostname>
+127.0.0.1		localhost.localdomain	localhost
+::1			localhost.localdomain	localhost ip6-localhost
+
+# End of file

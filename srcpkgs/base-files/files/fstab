@@ -1,9 +1,5 @@
-# Begin /etc/fstab
-
-# file system  mount-point  type     options             dump  fsck
-#                                                              order
-
-#/dev/<xxx>     /            <fff>    defaults            1     1
-#/dev/<yyy>     swap         swap     pri=1               0     0
-
-# End /etc/fstab
+#
+# See fstab(5).
+#
+# <file system>	<dir>	<type>	<options>		<dump>	<pass>
+tmpfs		/tmp	tmpfs	defaults,nosuid,nodev   0       0

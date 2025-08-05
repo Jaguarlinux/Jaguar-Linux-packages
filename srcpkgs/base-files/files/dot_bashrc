@@ -1,19 +1,7 @@
-# Begin ~/.bashrc
-# Written for Beyond Linux From Scratch
-# by James Robertson <jameswrobertson@earthlink.net>
+# .bashrc
 
-# Personal aliases and functions.
+# If not running interactively, don't do anything
+[[ $- != *i* ]] && return
 
-# Personal environment variables and startup programs should go in
-# ~/.bash_profile.  System wide environment variables and startup
-# programs are in /etc/profile.  System wide aliases and functions are
-# in /etc/bashrc.
-
-if [ -f "/etc/bashrc" ] ; then
-  source /etc/bashrc
-fi
-
-# Set up user specific i18n variables
-#export LANG=<ll>_<CC>.<charmap><@modifiers>
-
-# End ~/.bashrc
+alias ls='ls --color=auto'
+PS1='[\u@\h \W]\$ '

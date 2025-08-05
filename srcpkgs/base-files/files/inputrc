@@ -1,41 +1,66 @@
-# Begin /etc/inputrc
-# Modified by Chris Lynn <roryo@roryo.dynup.net>
+# /etc/inputrc - global inputrc for libreadline
+# See readline(3readline) and `info rluserman' for more information.
 
-# Allow the command prompt to wrap to the next line
-set horizontal-scroll-mode Off
+# Be 8 bit clean.
+set input-meta on
+set output-meta on
 
-# Enable 8-bit input
-set meta-flag On
-set input-meta On
+# To allow the use of 8bit-characters like the german umlauts, uncomment
+# the line below. However this makes the meta key not work as a meta key,
+# which is annoying to those which don't need to type in 8-bit characters.
 
-# Turns off 8th bit stripping
-set convert-meta Off
+# set convert-meta off
 
-# Keep the 8th bit for display
-set output-meta On
+# try to enable the application keypad when it is called.  Some systems
+# need this to enable the arrow keys.
+# set enable-keypad on
 
-# none, visible or audible
-set bell-style none
+# see /usr/share/doc/bash/inputrc.arrows for other codes of arrow keys
 
-# All of the following map the escape sequence of the value
-# contained in the 1st argument to the readline specific functions
-"\eOd": backward-word
-"\eOc": forward-word
+# do not bell on tab-completion
+# set bell-style none
+# set bell-style visible
 
-# for linux console
+# some defaults / modifications for the emacs mode
+$if mode=emacs
+
+# allow the use of the Home/End keys
 "\e[1~": beginning-of-line
 "\e[4~": end-of-line
-"\e[5~": beginning-of-history
-"\e[6~": end-of-history
+
+# allow the use of the Delete/Insert keys
 "\e[3~": delete-char
 "\e[2~": quoted-insert
 
-# for xterm
-"\eOH": beginning-of-line
-"\eOF": end-of-line
+# mappings for "page up" and "page down" to step to the beginning/end
+# of the history
+# "\e[5~": beginning-of-history
+# "\e[6~": end-of-history
 
-# for Konsole
-"\e[H": beginning-of-line
-"\e[F": end-of-line
+# alternate mappings for "page up" and "page down" to search the history
+# "\e[5~": history-search-backward
+# "\e[6~": history-search-forward
 
-# End /etc/inputrc
+# mappings for Ctrl-left-arrow and Ctrl-right-arrow for word moving
+"\e[1;5C": forward-word
+"\e[1;5D": backward-word
+"\e[5C": forward-word
+"\e[5D": backward-word
+"\e\e[C": forward-word
+"\e\e[D": backward-word
+
+$if term=rxvt
+"\e[8~": end-of-line
+"\eOc": forward-word
+"\eOd": backward-word
+$endif
+
+# for non RH/Debian xterm, can't hurt for RH/Debian xterm
+# "\eOH": beginning-of-line
+# "\eOF": end-of-line
+
+# for freebsd console
+# "\e[H": beginning-of-line
+# "\e[F": end-of-line
+
+$endif

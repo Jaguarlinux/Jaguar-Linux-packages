@@ -7,16 +7,24 @@ depends="dulge-triggers"
 short_desc="Jaguar Linux base system files"
 maintainer="TigerClips1 <spongebob1966@proton.me>"
 license="Public Domain"
-homepage="https://ps4jaguarlinux.site/"
+homepage="https://ps4jaguarlinux.site"
 conf_files="
 	/etc/inputrc
 	/etc/profile
 	/etc/hosts
+	/etc/host.conf
+	/etc/securetty
 	/etc/skel/.bash_profile
 	/etc/skel/.bash_logout
 	/etc/skel/.bashrc
 	/etc/skel/.inputrc
+	/etc/subuid
+	/etc/subgid
+	/etc/issue
+	/etc/passwd
+	/etc/group
 	/etc/fstab
+	/etc/crypttab
 	/etc/nsswitch.conf"
 
 replaces="base-directories>=0"
@@ -24,17 +32,21 @@ replaces="base-directories>=0"
 system_groups="kvm:24 plugdev:26 usbmon:27 sgx:28"
 
 do_install() {
-    vmkdir -pv ${DESTDIR}/{etc,var} ${DESTDIR}/usr/{bin,lib,sbin}
-
-for i in bin lib sbin; do
-  ln -sv usr/$i $LFS/$i
-done
-
-case $(uname -m) in
-  x86_64) vmkdir -pv ${DESTDIR}/lib64 ;;
-esac
-
-# Populate 32-bit lib files on 64-bit glibc systems, for multilib.
+	# Create bin and lib dirs and symlinks.
+	for d in bin lib; do
+		vmkdir "usr/${d}"
+		ln -snrf "${DESTDIR}/usr/${d}" "${DESTDIR}/${d}"
+	done
+	# Symlink sbin paths to /usr/bin.
+	for d in sbin usr/sbin; do
+		ln -snrf "${DESTDIR}/usr/bin" "${DESTDIR}/${d}"
+	done
+	# Symlink word-specific lib paths to /usr/lib.
+	for d in lib usr/lib; do
+		ln -snrf "${DESTDIR}/usr/lib" \
+			"${DESTDIR}/${d}${DULGE_TARGET_WORDSIZE}"
+	done
+	# Populate 32-bit lib files on 64-bit glibc systems, for multilib.
 	if [ "${DULGE_TARGET_WORDSIZE}" = "64" ] && [ "${DULGE_TARGET_LIBC}" = "glibc" ]; then
 		vmkdir usr/lib32
 		ln -snrf "${DESTDIR}/usr/lib32" "${DESTDIR}/lib32"
@@ -42,29 +54,52 @@ esac
 		vinstall "${FILESDIR}/ld.so.lib32.conf" 644 etc/ld.so.conf.d lib32.conf
 	fi
 
-vkdir -pv ${DESTDIR}/{dev,proc,sys,run}
+	# Install misc config files.
+	for f in bash_logout bash_profile bashrc inputrc; do
+		vinstall ${FILESDIR}/dot_${f} 644 etc/skel .${f}
+	done
 
-# Install misc config files.
-for f in bash_logout bash_profile bashrc inputrc; do
-    vinstall ${FILESDIR}/dot_${f} 644 etc/skel .${f}
-done
+	vinstall ${FILESDIR}/securetty 600 etc
+	for f in profile hosts host.conf issue subuid subgid \
+		inputrc fstab passwd group crypttab nsswitch.conf; do
+		vinstall ${FILESDIR}/${f} 644 etc
+	done
+	vmkdir etc/colors
+	vmkdir etc/profile.d
+	install -m644 ${FILESDIR}/*.sh ${DESTDIR}/etc/profile.d
+	install -m644 ${FILESDIR}/DIR_COLORS* ${DESTDIR}/etc/colors
 
-for f in profile hosts \
-    inputrc fstab nsswitch.conf; do
-    vinstall ${FILESDIR}/${f} 644 etc
-done
-vmkdir etc/colors
-vmkdir etc/profile.d
-install -m644 ${FILESDIR}/*.sh ${DESTDIR}/etc/profile.d
-install -m644 ${FILESDIR}/DIR_COLORS* ${DESTDIR}/etc/colors
+	# modprobe(8) files
+	vinstall ${FILESDIR}/usb-load-ehci-first 644 usr/lib/modprobe.d usb-load-ehci-first.conf
+	vinstall ${FILESDIR}/blacklist.conf 644 usr/lib/modprobe.d
+	# sysctl(8) files
+	vinstall ${FILESDIR}/sysctl.conf 644 usr/lib/sysctl.d 10-jaguar.conf
+	vinstall ${FILESDIR}/sysctl-user.conf 644 usr/lib/sysctl.d 10-jaguar-user.conf
+	vinstall ${FILESDIR}/bpf.conf 644 usr/lib/sysctl.d 20-bpf.conf
 
-vbin ${FILESDIR}/lsb_release
-vmkdir usr/share/licenses
-vmkdir usr/lib/udev/rules.d
-# os-release in the expected places
-vinstall ${FILESDIR}/os-release 644 /usr/lib/
-ln -s ../usr/lib/os-release ${DESTDIR}/etc/os-release
+	# Install common licenses, from Debian.
+	vmkdir usr/share/licenses
+	install -m644 ${FILESDIR}/licenses/* ${DESTDIR}/usr/share/licenses
 
-vinstall ${FILESDIR}/jaguar-release 644 /usr/lib/
-ln -s ../usr/lib/jaguar-release ${DESTDIR}/etc/jaguar-release
+	# vkpurge
+	vbin ${FILESDIR}/vkpurge
+	vman ${FILESDIR}/vkpurge.8
+	vcompletion "${FILESDIR}"/_vkpurge zsh vkpurge
+
+	vbin ${FILESDIR}/lsb_release
+
+	# Install default dracut configuration.
+	vinstall ${FILESDIR}/dracut.conf.d.jaguarlinux.conf 644 \
+		usr/lib/dracut/dracut.conf.d 00-jaguar.conf
+
+	# Create /proc/self/mounts -> /etc/mtab symlink.
+	ln -sf /proc/self/mounts ${DESTDIR}/etc/mtab
+
+	# udev rules
+	vmkdir usr/lib/udev/rules.d
+	install -m644 ${FILESDIR}/*.rules ${DESTDIR}/usr/lib/udev/rules.d
+
+	# os-release in the expected places
+	vinstall ${FILESDIR}/os-release 644 /usr/lib/
+	ln -s ../usr/lib/os-release ${DESTDIR}/etc/os-release
 }
