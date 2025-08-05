@@ -45,7 +45,7 @@ do_install() {
 	# Backward compatible links
 	# TZ=right/... known to be broken especially on musl, but whatever
 	ln -s ../zoneinfo-leaps "$DESTDIR/usr/share/zoneinfo/right"
-	if [ "$XBPS_TARGET_WORDSIZE" = 32 ]; then
+	if [ "$DULGE_TARGET_WORDSIZE" = 32 ]; then
 		vlicense strftime.license
 	fi
 }

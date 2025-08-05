@@ -14,7 +14,7 @@ homepage="http://www.gnu.org/software/sed"
 distfiles="${GNU_SITE}/${pkgname}/${pkgname}-${version}.tar.xz"
 checksum=6e226b732e1cd739464ad6862bd1a1aba42d7982922da7a53519631d24975181
 
-if [ "$XBPS_TARGET_LIBC" = musl ]; then
+if [ "$DULGE_TARGET_LIBC" = musl ]; then
 	export ac_cv_lib_error_at_line=no
 	export ac_cv_header_sys_cdefs_h=no
 fi
@@ -25,7 +25,7 @@ post_extract() {
 }
 
 pre_check() {
-	case "$XBPS_TARGET_MACHINE" in
+	case "$DULGE_TARGET_MACHINE" in
 		*-musl)
 			# Disable locale tests that fail on musl
 			sed -i '/test-localename$(EXEEXT)/d' gnulib-tests/Makefile

@@ -1,0 +1,22 @@
+# Template file for 'dulge-triggers'
+pkgname=dulge-triggers
+version=1.0
+revision=1
+bootstrap=yes
+short_desc="DULGE triggers for Void Linux"
+maintainer="TigerClips1 <spongebob1966@proton.me>"
+license="Public Domain"
+homepage="https://ps4jaguarlinux.site/"
+
+do_install() {
+	_triggersdir=usr/libexec/${pkgname}
+
+	for f in ${FILESDIR}/*; do
+		_trigger=$(basename $f)
+		vinstall ${FILESDIR}/${_trigger} 754 ${_triggersdir}
+		echo "# end" >> ${DESTDIR}/${_triggersdir}/${_trigger}
+	done
+	vmkdir var/db/dulge
+	cd ${DESTDIR}/var/db/dulge
+	ln -sf ../../../${_triggersdir} triggers
+}

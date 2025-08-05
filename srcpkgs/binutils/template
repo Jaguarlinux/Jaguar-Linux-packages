@@ -6,7 +6,7 @@ bootstrap=yes
 hostmakedepends="pkgconf tar"
 makedepends="zlib-devel libzstd-devel"
 short_desc="GNU binary utilities"
-maintainer="Enno Boland <gottox@voidlinux.org>"
+maintainer="TigerClips1 <spongebob1966@proton.me>"
 license="GPL-3.0-or-later"
 homepage="http://www.gnu.org/software/binutils/"
 distfiles="${GNU_SITE}/binutils/binutils-${version}.tar.xz"
@@ -28,13 +28,13 @@ else
 fi
 
 _get_triplet() {
-	if [ -z "$XBPS_TRIPLET" ]; then
+	if [ -z "$DULGE_TRIPLET" ]; then
 		echo $(
-			source "${XBPS_COMMONDIR}/build-profiles/${XBPS_MACHINE}.sh"
-			echo "$XBPS_TRIPLET"
+			source "${DULGE_COMMONDIR}/build-profiles/${DULGE_MACHINE}.sh"
+			echo "$DULGE_TRIPLET"
 		)
 	else
-		echo "$XBPS_TRIPLET"
+		echo "$DULGE_TRIPLET"
 	fi
 }
 
@@ -46,24 +46,24 @@ do_configure() {
 	else
 		conf+=" --without-debuginfod --disable-shared --disable-install-libbfd"
 		sed -i "
-			s;zlibinc=\$;&-I${XBPS_MASTERDIR}/usr/include;
-			s;zlibdir=\$;&-L${XBPS_MASTERDIR}/usr/lib;
+			s;zlibinc=\$;&-I${DULGE_MASTERDIR}/usr/include;
+			s;zlibdir=\$;&-L${DULGE_MASTERDIR}/usr/lib;
 		" */configure
 	fi
 	if [ "$CROSS_BUILD" ]; then
-		# we don't want --with-sysroot=${XBPS_CROSS_BASE} like gnu-configure
-		conf+=" --host=${XBPS_CROSS_TRIPLET} --with-build-sysroot=${XBPS_CROSS_BASE}"
+		# we don't want --with-sysroot=${DULGE_CROSS_BASE} like gnu-configure
+		conf+=" --host=${DULGE_CROSS_TRIPLET} --with-build-sysroot=${DULGE_CROSS_BASE}"
 		# pkgconf adds sysroot includes to cflags and ldflags, which breaks binutils cross-compile with zstd
-		vsed -e '/PKG_CONFIG_SYSROOT_DIR/d' -i ${XBPS_WRAPPERDIR}/${XBPS_CROSS_TRIPLET}-pkg-config
+		vsed -e '/PKG_CONFIG_SYSROOT_DIR/d' -i ${DULGE_WRAPPERDIR}/${DULGE_CROSS_TRIPLET}-pkg-config
 	fi
 
 	# gprofng currently only supports x86 and aarch64 glibc.
-	case "$XBPS_TARGET_MACHINE" in
+	case "$DULGE_TARGET_MACHINE" in
 		x86_64|i686|aarch64) conf+=" --enable-gprofng" ;;
 		*) conf+=" --disable-gprofng" ;;
 	esac
 
-	case "$XBPS_TARGET_MACHINE" in
+	case "$DULGE_TARGET_MACHINE" in
 		ppc*)
 			conf+=" --enable-secureplt"
 			;;
@@ -81,14 +81,14 @@ do_configure() {
 	fi
 
 	# enable multilib on x86_64 glibc
-	if [ "$XBPS_TARGET_MACHINE" = "x86_64" ]; then
+	if [ "$DULGE_TARGET_MACHINE" = "x86_64" ]; then
 		conf+=" --enable-multilib"
 	else
 		conf+=" --disable-multilib"
 	fi
 
 	# ensure softfloat on sf mips targets and set the default hash style
-	case "$XBPS_TARGET_MACHINE" in
+	case "$DULGE_TARGET_MACHINE" in
 		mips*hf*) conf+=" --enable-default-hash-style=sysv" ;;
 		mips*) conf+=" --without-fp --enable-default-hash-style=sysv" ;;
 		*) conf+=" --enable-default-hash-style=gnu";;
@@ -145,9 +145,9 @@ do_install() {
 		# Remove these symlinks, they are not ABI stable.
 		# Programs should compile static to the .a file.
 		rm -f ${DESTDIR}/usr/lib/lib{bfd,opcodes}.so
-		echo "INPUT ( /usr/lib${XBPS_TARGET_WORDSIZE}/libbfd.a -lsframe -liberty -lzstd -lz )" \
+		echo "INPUT ( /usr/lib${DULGE_TARGET_WORDSIZE}/libbfd.a -lsframe -liberty -lzstd -lz )" \
 			>${DESTDIR}/usr/lib/libbfd.so
-		echo "INPUT ( /usr/lib${XBPS_TARGET_WORDSIZE}/libopcodes.a -lbfd )" \
+		echo "INPUT ( /usr/lib${DULGE_TARGET_WORDSIZE}/libopcodes.a -lbfd )" \
 			>${DESTDIR}/usr/lib/libopcodes.so
 
 		# Install PIC version of libiberty.a
@@ -160,7 +160,7 @@ do_install() {
 	done
 	# Create triplet symlinks
 	for f in ${DESTDIR}/usr/bin/*; do
-		ln -s ${f##*/} ${DESTDIR}/usr/bin/${XBPS_CROSS_TRIPLET:-${_triplet}}-${f##*/}
+		ln -s ${f##*/} ${DESTDIR}/usr/bin/${DULGE_CROSS_TRIPLET:-${_triplet}}-${f##*/}
 	done
 }
 

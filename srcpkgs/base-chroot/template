@@ -1,0 +1,27 @@
+# Template file for 'base-chroot'
+pkgname=base-chroot
+version=0.67
+revision=3
+bootstrap=yes
+metapackage=yes
+short_desc="Minimal set of packages required for chroot with dulge-src"
+maintainer="TigerClips1 <spongebob1966@proton.me>"
+license="Public Domain"
+homepage="http://www.voidlinux.org"
+repository=bootstrap
+
+case "$DULGE_TARGET_LIBC" in
+	musl) depends="musl-devel";;
+	*) depends="glibc-devel glibc-locales";;
+esac
+
+depends+="
+ base-files binutils gcc gcc-ada libada-devel
+ patch sed findutils diffutils make gzip coreutils
+ file bsdtar dulge mpfr ncurses libreadline8
+ chroot-bash chroot-grep chroot-gawk chroot-distcc
+ chroot-util-linux chroot-git tzdata"
+
+if [ "$CHROOT_READY" ]; then
+	depends+=" ccache"
+fi
