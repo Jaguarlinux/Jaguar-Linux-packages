@@ -18,6 +18,21 @@ build_options="compressed"
 desc_option_compressed="compress firmware with zstd"
 
 do_install() {
+	for unit in mec mec2 sdma sdma1 uvd vce pfp me ce 
+	do
+		python3 ${FILESDIR}/resize_firmware.py  amdgpu/kaveri_${unit}.bin amdgpu/liverpool_${unit}.bin
+	done
+
+	for unit in mec mec2 sdma sdma1 uvd vce pfp me ce 
+	do
+		python3 ${FILESDIR}/resize_firmware.py  radeon/kaveri_${unit}.bin radeon/liverpool_${unit}.bin
+	done
+
+	for unit in mec mec2 sdma sdma1 uvd vce pfp me ce 
+	do
+		python3 ${FILESDIR}/resize_firmware.py  radeon/kaveri_${unit}.bin radeon/LIVERPOOL${unit}.bin
+	done
+
 	if [ -n "$build_option_compressed" ]; then
 		env ZSTD_CLEVEL=9 ZSTD_NBTHREADS="$DULGE_MAKEJOBS" \
 			make install-zst dedup FIRMWAREDIR=/usr/lib/firmware DESTDIR="$DESTDIR"
