@@ -1,7 +1,7 @@
 # Template file for 'alsa-plugins'
 pkgname=alsa-plugins
 version=1.2.12
-revision=1
+revision=2
 build_style=gnu-configure
 configure_args="--disable-maemo-plugin"
 hostmakedepends="pkg-config"
@@ -32,6 +32,7 @@ alsa-plugins-pulseaudio_package() {
 	pkg_install() {
 		vmove "usr/lib/alsa-lib/*pulse*"
 		vmove "usr/share/alsa/alsa.conf.d/*pulse*"
+		vconf ${FILESDIR}/asound.conf
 	}
 }
 

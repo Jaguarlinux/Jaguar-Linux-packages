@@ -38,14 +38,14 @@ distfiles="https://github.com/systemd/systemd/archive/refs/tags/v${version}.tar.
 checksum=c085f162dec001407dd32f00abbf20b7e6ed7043dcfaf8ed954787d86707f409
 make_check=no  # tests a bunch of stuff we aren't using
 
-if [ "${XBPS_TARGET_LIBC}" = glibc ]; then
+if [ "${DULGE_TARGET_LIBC}" = glibc ]; then
 	makedepends+=" libxcrypt-devel"
 else
 	# see src/basic/linux/if_ether.h
 	export CFLAGS="-D__UAPI_DEF_ETHHDR=0 -Wno-error=incompatible-pointer-types"
 fi
 
-case "${XBPS_TARGET_MACHINE}" in
+case "${DULGE_TARGET_MACHINE}" in
 	x86_64*)  _efi_arch="x64"     ;;
 	i686*)    _efi_arch="ia32"    ;;
 	aarch64*) _efi_arch="aa64"    ;;
@@ -63,7 +63,7 @@ _libexecs=(systemd-bless-boot)
 make_build_target="${_bins[*]} ${_mans[*]} ${_efis[*]} ${_libexecs[*]}"
 
 post_patch() {
-	if [ "${XBPS_TARGET_LIBC}" = musl ]; then
+	if [ "${DULGE_TARGET_LIBC}" = musl ]; then
 		for x in ${FILESDIR}/patches/musl/*.patch; do
 			msg_normal "Applying patch $x\n"
 			patch -sNp1 -i ${x}

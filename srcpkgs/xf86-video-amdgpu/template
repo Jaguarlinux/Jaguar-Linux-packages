@@ -12,7 +12,7 @@ maintainer="TigerClips1 <spongebob1966@proton.me>"
 license="MIT"
 homepage="https://wiki.freedesktop.org/xorg"
 distfiles="https://github.com/Jaguarlinux/ps4linux-xorg/archive/refs/tags/ps4-xorg-stable.tar.gz"
-checksum=4f04f0ea66f3ced0dcc58f617409860163a19c4e8c285cfb5285f36ba09cc061
+# checksum=4f04f0ea66f3ced0dcc58f617409860163a19c4e8c285cfb5285f36ba09cc061
 
 lib32disabled=yes
 LDFLAGS="-Wl,-z,lazy"

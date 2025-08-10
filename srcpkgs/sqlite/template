@@ -7,10 +7,10 @@ build_style=configure
 # Even when it is included in the build, memsys5 is disabled by default.
 configure_args="--enable-threadsafe --enable-load-extension --enable-math
  --enable-fts3 --enable-fts4 --enable-fts5 --enable-memsys5
- --enable-rtree --enable-geopoly --host=$XBPS_CROSS_TRIPLET
+ --enable-rtree --enable-geopoly --host=$DULGE_CROSS_TRIPLET
  --prefix=/usr --soname=legacy --editline
- --with-readline-header=${CROSS_BUILD:+$XBPS_CROSS_BASE}/usr/include/editline/readline.h
- --with-tcl=$XBPS_CROSS_BASE/usr/lib"
+ --with-readline-header=${CROSS_BUILD:+$DULGE_CROSS_BASE}/usr/include/editline/readline.h
+ --with-tcl=$DULGE_CROSS_BASE/usr/lib"
 hostmakedepends="tcl"
 makedepends="libedit-devel zlib-devel tcl-devel"
 short_desc="SQL Database Engine in a C Library"
@@ -31,7 +31,7 @@ CFLAGS+=" -DHAVE_FDATASYNC"
 disable_parallel_build=yes
 
 # explicitly set byte order to avoid bad autodetection macros
-case "$XBPS_TARGET_ENDIAN" in
+case "$DULGE_TARGET_ENDIAN" in
 	le) CFLAGS+=" -DSHA3_BYTEORDER=1234 -DSQLITE_BYTEORDER=1234";;
 	be) CFLAGS+=" -DSHA3_BYTEORDER=4321 -DSQLITE_BYTEORDER=4321";;
 esac

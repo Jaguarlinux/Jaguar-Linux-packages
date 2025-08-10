@@ -1,0 +1,8 @@
+# workaround for https://github.com/void-linux/dulge/issues/14
+case "${ACTION}" in
+pre)
+	if [ "$UPDATE" = "yes" ]; then
+		dulge-query -f gimp | grep "usr/lib/gimp/2.0/plug-ins" | sed -e 's|/||' | xargs rm -f
+	fi
+	;;
+esac

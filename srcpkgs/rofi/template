@@ -19,7 +19,7 @@ changelog="https://github.com/davatorium/rofi/releases"
 distfiles="https://github.com/davatorium/rofi/releases/download/${version%.1}/rofi-${version}.tar.xz"
 checksum=04c128f8c56f043cd229545285ee773322d0eafaffad100b8604338108c5f5ec
 
-if [ "$XBPS_CHECK_PKGS" ]; then
+if [ "$DULGE_CHECK_PKGS" ]; then
 	configure_args+=" -Dcheck=enabled"
 else
 	configure_args+=" -Dcheck=disabled"

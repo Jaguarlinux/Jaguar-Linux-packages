@@ -1,0 +1,13 @@
+# Template file for 'runit-iptables'
+pkgname=runit-iptables
+version=20180616
+revision=2
+depends="runit-void iptables"
+short_desc="Restore iptables rules on boot"
+maintainer="TigerClips1 <spongebob1966@proton.me>"
+license="Public Domain"
+homepage="https://ps4jaguarlinux.site/"
+
+do_install() {
+	vinstall ${FILESDIR}/91-iptables.sh 0644 etc/runit/core-services
+}

@@ -19,7 +19,7 @@ build_options="altivec assembly"
 desc_option_altivec="Enable AltiVec support on ppc64 (POWER8 and higher only)"
 desc_option_assembly="Enable assembly support on x86/ARM"
 
-case "$XBPS_TARGET_MACHINE" in
+case "$DULGE_TARGET_MACHINE" in
 	ppc64le*) build_options_default="altivec" ;;
 	# on ARM, enabling it currently fails with undefined reference to
 	# x265::setupAssemblyPrimitives(x265::EncoderPrimitives&, int)
@@ -28,7 +28,7 @@ case "$XBPS_TARGET_MACHINE" in
 esac
 
 if [ "$build_option_assembly" ]; then
-	case "$XBPS_TARGET_MACHINE" in
+	case "$DULGE_TARGET_MACHINE" in
 	x86_64* | i686*)
 		# see https://bitbucket.org/multicoreware/x265_git/issues/559
 		configure_args+=" -DCMAKE_ASM_NASM_FLAGS=-w-macro-params-legacy"
@@ -38,7 +38,7 @@ if [ "$build_option_assembly" ]; then
 	esac
 fi
 
-case "$XBPS_TARGET_MACHINE" in
+case "$DULGE_TARGET_MACHINE" in
 ppc64*)
 	# altivec does not build without power8 being enabled
 	configure_args+=" -DENABLE_ALTIVEC=$(vopt_if altivec ON OFF)
@@ -62,7 +62,7 @@ post_configure() {
 	configure_args="${configure_args/-DLINKED_12BIT=.*/}"
 
 	# source/common/x86/intrapred16.asm:20642: error: invalid combination of opcode and operands
-	case "$XBPS_TARGET_MACHINE" in
+	case "$DULGE_TARGET_MACHINE" in
 		i686*) configure_args="${configure_args/-DENABLE_ASSEMBLY=.*/} -DENABLE_ASSEMBLY=OFF" ;;
 		*) ;;
 	esac

@@ -36,7 +36,7 @@ alternatives="
  python:python:/usr/bin/python${version%.*}
  python:python.1:/usr/share/man/man1/python${version%.*}.1"
 
-if [ "$XBPS_TARGET_LIBC" = "glibc" ]; then
+if [ "$DULGE_TARGET_LIBC" = "glibc" ]; then
 	makedepends+=" libxcrypt-devel"
 fi
 
@@ -53,7 +53,7 @@ post_extract() {
 	rm -r Modules/expat
 
 	# Extract Bluetooth headers
-	local _srcdistdir="${XBPS_SRCDISTDIR}/${sourcepkg}-${version}"
+	local _srcdistdir="${DULGE_SRCDISTDIR}/${sourcepkg}-${version}"
 	mkdir External
 	bsdtar -C External --strip-components=1 -x \
 		-f "${_srcdistdir}/${_bluez}.tar.xz" "${_bluez}/lib/*.h"
@@ -86,7 +86,7 @@ do_configure() {
 do_check() {
 	local opts
 
-	# relies on sane group membership not found in xbps-src
+	# relies on sane group membership not found in dulge-src
 	opts="-i test_chown_*"
 	# expects shadow passwd db unreadable by user
 	opts+=" -i test_getspnam_exception"
@@ -103,7 +103,7 @@ do_check() {
 	# error handling raises exceptions
 	opts+=" -i test_ftp*"
 
-	if [ "${XBPS_TARGET_LIBC}" = "musl" ]; then
+	if [ "${DULGE_TARGET_LIBC}" = "musl" ]; then
 		# musl doesn't work with locales
 		opts+=" -i test_locale* -i test_c_locale* -i test__locale"
 		opts+=" -i test_fpathconf"
@@ -139,16 +139,16 @@ do_install() {
 	rm -rf ${_dst_py3_lib}/lib2to3/tests
 
 	# Remove references to the install(1) wrapper.
-	sed -e "s,${XBPS_WRAPPERDIR},/usr/bin,g" -i \
+	sed -e "s,${DULGE_WRAPPERDIR},/usr/bin,g" -i \
 		${_dst_py3_lib}/_sysconfigdata_*_*.py \
 		${_dst_py3_lib}/config-${version%.*}*/Makefile
 
 	if [ "$CROSS_BUILD" ]; then
 		# Remove references to cross toolchain.
-		sed -i "s/$XBPS_CROSS_TRIPLET-//g" \
+		sed -i "s/$DULGE_CROSS_TRIPLET-//g" \
 			${_dst_py3_lib}/_sysconfigdata_*_*.py \
 			${_dst_py3_lib}/config-${version%.*}*/Makefile
-		sed -i -e "s,$XBPS_CROSS_BASE,,g" \
+		sed -i -e "s,$DULGE_CROSS_BASE,,g" \
 			${DESTDIR}/usr/bin/python${version%.*}-config
 	fi
 
@@ -158,6 +158,8 @@ do_install() {
 		${DESTDIR}/usr/bin/python${version%.*}-config \
 		${_dst_py3_lib}/_sysconfigdata_*_*.py \
 		${_dst_py3_lib}/config-${version%.*}*/Makefile
+
+
 }
 
 python3-devel_package() {

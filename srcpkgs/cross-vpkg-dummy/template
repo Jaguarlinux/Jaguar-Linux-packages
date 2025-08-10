@@ -7,7 +7,7 @@ depends="base-files>=0.126"
 short_desc="Dummy meta-pkg for cross building packages with dulge-src"
 maintainer="TigerClips1 <spongebob1966@proton.me>"
 license="Public Domain"
-homepage="https://ps4jaguarlinux.site/"
+homepage="https://ps4jaguarlinux.site//"
 provides="
 	kernel-libc-headers-9999_1
 	binutils-9999_1

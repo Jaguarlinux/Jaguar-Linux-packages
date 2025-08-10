@@ -1,0 +1,21 @@
+# Template file for 'lychee'
+pkgname=lychee
+version=0.19.1
+revision=1
+build_style=cargo
+configure_args="--bin lychee"
+make_install_args="--path lychee-bin"
+hostmakedepends="pkg-config"
+makedepends="openssl-devel"
+short_desc="Fast, async, stream-based link checker written in Rust"
+maintainer="TigerClips1 <spongebob1966@proton.me>"
+license="Apache-2.0, MIT"
+homepage="https://lychee.cli.rs"
+changelog="https://github.com/lycheeverse/lychee/releases"
+distfiles="https://github.com/lycheeverse/lychee/archive/refs/tags/lychee-v${version}.tar.gz"
+checksum=20870738b8a1ccd4658327351682382a177234014ea5e24e9f932f905b2f7d35
+
+post_install() {
+	vlicense LICENSE-APACHE
+	vlicense LICENSE-MIT
+}

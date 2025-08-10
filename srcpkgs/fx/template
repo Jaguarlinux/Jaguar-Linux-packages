@@ -1,0 +1,17 @@
+# Template file for 'fx'
+pkgname=fx
+version=37.0.1
+revision=1
+build_style=go
+go_import_path=github.com/antonmedv/fx
+short_desc="Terminal JSON viewer & processor"
+maintainer="TigerClips1 <spongebob1966@proton.me>"
+license="MIT"
+homepage="https://fx.wtf"
+changelog="https://github.com/antonmedv/fx/releases"
+distfiles="https://github.com/antonmedv/fx/archive/refs/tags/${version}.tar.gz"
+checksum=1d81db387d804c43368f6f85c760242814da07363a15b329e8ff8d369b343e8a
+
+post_install() {
+	vlicense LICENSE
+}

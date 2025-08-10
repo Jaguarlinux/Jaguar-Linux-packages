@@ -1,0 +1,17 @@
+# Template file for 'kwayland-integration'
+pkgname=kwayland-integration
+version=6.4.3
+revision=1
+build_style=cmake
+configure_args="-DBUILD_TESTING=OFF -DKDE_INSTALL_QTPLUGINDIR=lib/qt6/plugins"
+hostmakedepends="extra-cmake-modules qt5-devel qt5-qmake wayland-devel
+ pkg-config wayland-protocols qt5-wayland-devel
+ plasma-wayland-protocols"
+makedepends="kidletime-devel kwayland-devel kwindowsystem-devel kguiaddons-devel
+ libxkbcommon-devel qt5-wayland-devel wayland-protocols wayland-devel"
+short_desc="Integration plugins for Kwayland"
+maintainer="TigerClips1 <spongebob1966@proton.me>"
+license="LGPL-2.1-or-later"
+homepage="https://invent.kde.org/plasma/kwayland-integration"
+distfiles="${KDE_SITE}/plasma/${version}/${pkgname}-${version}.tar.xz"
+checksum=9baf2134e2d32e9d4d417894fa63911fa94bca86198ef8e16e461d5989b6e2d0

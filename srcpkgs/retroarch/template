@@ -72,7 +72,7 @@ if [ "$build_option_x11" ]; then
 	fi
 fi
 
-case "$XBPS_TARGET_MACHINE" in
+case "$DULGE_TARGET_MACHINE" in
 	i686*|x86_64*)
 		configure_args+=" --enable-sse --enable-threads"
 		;;
@@ -97,5 +97,5 @@ case "$XBPS_TARGET_MACHINE" in
 	esac
 
 if [ "$CROSS_BUILD" ]; then
-	configure_args+=" --host=${XBPS_CROSS_TRIPLET}"
+	configure_args+=" --host=${DULGE_CROSS_TRIPLET}"
 fi

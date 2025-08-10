@@ -1,0 +1,16 @@
+# Template file for 'sv-netmount'
+pkgname=sv-netmount
+version=0.1
+revision=3
+metapackage=yes
+short_desc="Service to mount/umount network filesystems from fstab"
+maintainer="TigerClips1 <spongebob1966@proton.me>"
+license="GPL-2.0-or-later"
+homepage="https://ps4jaguarlinux.site/"
+
+depends="runit"
+
+post_install() {
+	# runit services
+	vsv netmount
+}

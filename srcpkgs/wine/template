@@ -27,7 +27,7 @@ desc_option_xshm="Enable support for the X Shared Memory Extension"
 desc_option_wow64="Run 32-bit Windows apps on a purely 64-bit Unix installation"
 
 
-if [ "$XBPS_TARGET_LIBC" = "musl" ]; then
+if [ "$DULGE_TARGET_LIBC" = "musl" ]; then
 	build_options_default+=" wow64"
 fi
 
@@ -37,7 +37,7 @@ archs="i686* x86_64*"
 patch_args="-Np1 --directory=${build_wrksrc}"
 
 _nopie=no
-if [ "$XBPS_TARGET_MACHINE" = i686-musl ]; then
+if [ "$DULGE_TARGET_MACHINE" = i686-musl ]; then
 	# build system adds -fno-PIC for 32bit builds, which,
 	# coupled with our default pie toolchain, leads to textrels
 	# in the final binary; musl doesn't support those
@@ -45,7 +45,7 @@ if [ "$XBPS_TARGET_MACHINE" = i686-musl ]; then
 fi
 
 hostmakedepends="pkg-config flex gettext
- $(vopt_if mingw "cross-${XBPS_TARGET_MACHINE%-musl}-w64-mingw32")
+ $(vopt_if mingw "cross-${DULGE_TARGET_MACHINE%-musl}-w64-mingw32")
  $(vopt_if staging 'autoconf')"
 makedepends="gettext-devel ncurses-devel glu-devel libSM-devel
  libXext-devel libX11-devel libXpm-devel libXinerama-devel
@@ -67,7 +67,7 @@ replaces="libwine>=0"
 # This testsuite might hang indefinitely
 make_check=extended
 
-if [ "$XBPS_TARGET_WORDSIZE" != 32 ]; then
+if [ "$DULGE_TARGET_WORDSIZE" != 32 ]; then
 	configure_args+=" --enable-win64 --libdir=/usr/lib"
 	_wine_suffix="64"
 else

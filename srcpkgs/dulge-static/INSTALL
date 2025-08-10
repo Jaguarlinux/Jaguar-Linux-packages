@@ -1,0 +1,6 @@
+case "${ACTION}" in
+post)
+	chown root:xbuilder usr/bin/dulge-uchroot.static
+	chmod 4750 usr/bin/dulge-uchroot.static
+	;;
+esac

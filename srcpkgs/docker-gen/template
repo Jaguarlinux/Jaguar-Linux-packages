@@ -1,0 +1,17 @@
+# Template file for 'docker-gen'
+pkgname=docker-gen
+version=0.15.0
+revision=1
+build_style=go
+go_import_path="github.com/nginx-proxy/docker-gen"
+go_package="${go_import_path}/cmd/docker-gen"
+short_desc="Generate files from docker container meta-data"
+maintainer="TigerClips1 <spongebob1966@proton.me>"
+license="MIT"
+homepage="https://github.com/nginx-proxy/docker-gen"
+distfiles="https://github.com/nginx-proxy/docker-gen/archive/refs/tags/${version}.tar.gz"
+checksum=d42b02c11577aca112efa7e5ef3cb011e5355e9b3ea2bc753eb6a1a1cf1177b4
+
+post_install() {
+	vlicense LICENSE
+}

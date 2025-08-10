@@ -1,0 +1,26 @@
+# Template file for 'base-system'
+pkgname=base-system
+version=0.114
+revision=2
+metapackage=yes
+short_desc="Jaguar Linux base system meta package"
+maintainer="TigerClips1 <spongebob1966@proton.me>"
+license="Public Domain"
+homepage="https://ps4jaguarlinux.site/"
+
+depends="
+ base-files>=0.77 ncurses coreutils findutils diffutils libgcc
+ dash bash grep gzip file sed gawk less util-linux which tar man-pages
+ mdocml>=1.13.3 shadow e2fsprogs btrfs-progs xfsprogs f2fs-tools dosfstools
+ procps-ng tzdata pciutils usbutils iana-etc openssh dhcpcd
+ kbd iproute2 iputils iw wpa_supplicant dulge nvi sudo wifi-firmware
+  traceroute ethtool kmod acpid eudev  removed-packages"
+
+case "$DULGE_TARGET_MACHINE" in
+	*-musl) depends+=" musl";;
+	*) depends+=" glibc-locales";;
+esac
+
+case "$DULGE_TARGET_MACHINE" in
+	i686*|x86_64*|ppc*) depends+=" linux";;
+esac

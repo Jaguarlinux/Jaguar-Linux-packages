@@ -13,7 +13,7 @@ homepage="https://codeberg.org/schilytools/schilytools"
 distfiles="https://codeberg.org/schilytools/schilytools/archive/${version//./-}.tar.gz"
 checksum=4d66bf35a5bc2927248fac82266b56514fde07c1acda66f25b9c42ccff560a02
 
-_common_flags=(ARCH="${XBPS_TARGET_MACHINE%-musl}" GMAKE_NOWARN=true INS_BASE=/usr)
+_common_flags=(ARCH="${DULGE_TARGET_MACHINE%-musl}" GMAKE_NOWARN=true INS_BASE=/usr)
 
 post_patch() {
 	vsed -i 's|INSDIR=.*|INSDIR=bin|' rscsi/Makefile
@@ -26,7 +26,7 @@ do_build() {
 	( cd psmake && CC="gcc" CC_OPT="-O2" CFLAGS="" LDFLAGS="" sh ./MAKE-all )
 
 	if [ "$CROSS_BUILD" ]; then
-		export CONFIG_RMTCALL="/usr/bin/qemu-${XBPS_TARGET_QEMU_MACHINE}-static"
+		export CONFIG_RMTCALL="/usr/bin/qemu-${DULGE_TARGET_QEMU_MACHINE}-static"
 		export CONFIG_RMTHOST=dummy
 	fi
 

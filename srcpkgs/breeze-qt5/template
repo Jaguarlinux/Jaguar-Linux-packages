@@ -1,0 +1,21 @@
+# Template file for 'breeze-qt5'
+pkgname=breeze-qt5
+version=6.4.3
+revision=1
+build_style=cmake
+configure_args="-DBUILD_TESTING=OFF -DBUILD_QT6=OFF -DKF5_HOST_TOOLING=/usr/lib/cmake"
+hostmakedepends="extra-cmake-modules qt5-qmake qt5-host-tools
+ gettext kcmutils-devel kpackage-devel kconfig-devel kcoreaddons-devel"
+makedepends="frameworkintegration-devel kcmutils-devel fftw-devel plasma-framework-devel"
+depends="frameworkintegration breeze-qt6"
+short_desc="Breeze visual style for the Plasma Desktop"
+maintainer="TigerClips1 <spongebob1966@proton.me>"
+license="GPL-2.0-or-later"
+homepage="https://invent.kde.org/plasma/breeze"
+distfiles="${KDE_SITE}/plasma/${version}/${pkgname%-qt5}-${version}.tar.xz"
+checksum=017a2dadf803a0c2d167489f5ba4d2a0011fc58fcf18c5e76fa6fc22f4844fbf
+replaces="breeze<6.0.0_1"
+
+post_install() {
+	rm -rf ${DESTDIR}/usr/share
+}

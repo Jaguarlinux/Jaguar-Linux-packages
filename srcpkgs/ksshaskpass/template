@@ -1,0 +1,16 @@
+# Template file for 'ksshaskpass'
+pkgname=ksshaskpass
+version=6.4.3
+revision=1
+build_style=cmake
+configure_args="-DBUILD_TESTING=OFF -DKF6_HOST_TOOLING=/usr/lib/cmake"
+hostmakedepends="extra-cmake-modules qt6-base qt6-tools gettext
+ kf6-kdoctools"
+makedepends="kf6-kwallet-devel kf6-kdoctools-devel"
+short_desc="KDE ssh-add helper"
+maintainer="TigerClips1 <spongebob1966@proton.me>"
+license="GPL-2.0-or-later"
+homepage="https://invent.kde.org/plasma/ksshaskpass"
+distfiles="${KDE_SITE}/plasma/${version}/${pkgname}-${version}.tar.xz"
+checksum=965f89a01aa91c07ed5b8aed2be3521f88e98b22e1277846f12440c9760baf10
+alternatives="ssh-askpass:/usr/libexec/ssh-askpass:/usr/bin/ksshaskpass"

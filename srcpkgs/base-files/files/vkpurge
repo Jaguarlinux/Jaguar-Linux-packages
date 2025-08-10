@@ -16,7 +16,7 @@ _EOF
 
 list_kernels() {
 	running=$(uname -r)
-	installed=$(xbps-query -o "/boot/vmlinu[xz]-*" 2>/dev/null | awk '{print $2}')
+	installed=$(dulge-query -o "/boot/vmlinu[xz]-*" 2>/dev/null | awk '{print $2}')
 	for arg; do
 		case "$arg" in
 			all) pattern="*" ;;

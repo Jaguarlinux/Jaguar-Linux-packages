@@ -26,7 +26,7 @@ do_build() {
 		cross=no
 	else
 		cross=yes
-		sed -i "s/|| \${tmp}/|| qemu-${XBPS_TARGET_QEMU_MACHINE}-static \${tmp}/" mk/make-config.sh
+		sed -i "s/|| \${tmp}/|| qemu-${DULGE_TARGET_QEMU_MACHINE}-static \${tmp}/" mk/make-config.sh
 	fi
 	make config \
 		VAL_PREFIX=/usr \

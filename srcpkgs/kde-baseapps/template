@@ -1,0 +1,23 @@
+# Template file for 'kde-baseapps'
+pkgname=kde-baseapps
+version=24.02.0
+revision=3
+metapackage=yes
+depends="
+	dolphin>=${version}
+	kate>=${version}
+	konsole>=${version}"
+short_desc="KDE base applications meta-package for Void Linux"
+maintainer="TigerClips1 <spongebob1966@proton.me>"
+license="GPL-2.0-only"
+homepage="https://www.kde.org"
+
+if [ "$DULGE_WORDSIZE$DULGE_WORDSIZE" = "64$DULGE_TARGET_WORDSIZE" ]; then
+	depends+=" khelpcenter>=${version}"
+fi
+
+kde5-baseapps_package() {
+	metapackage=yes
+	depends="${sourcepkg}>=${version}_${revision}"
+	short_desc+=" (transitional dummy package)"
+}

@@ -1,0 +1,2 @@
+#!/bin/sh
+/usr/bin/prelink-rtld --root=${DULGE_CROSS_BASE} "$@"

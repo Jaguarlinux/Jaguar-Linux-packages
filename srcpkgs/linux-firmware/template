@@ -29,27 +29,9 @@ do_install() {
 	do
 		vlicense "$_l"
 	done
-    
-    python3 "${FILESDIR}"/resize_firmware.py ${DESTDIR}/amdgpu/hawaii_pfp.bin 17024 ${DESTDIR}/amdgpu/liverpool_pfp.bin
-	python3 "${FILESDIR}"/resize_firmware.py ${DESTDIR}/amdgpu/hawaii_me.bin 17024 ${DESTDIR}/amdgpu/liverpool_me.bin
-    python3 "${FILESDIR}"/resize_firmware.py ${DESTDIR}/radeon/hawaii_pfp.bin 17024 ${DESTDIR}/amdgpu/liverpool_pfp.bin
-	python3 "${FILESDIR}"/resize_firmware.py ${DESTDIR}/radeon/hawaii_me.bin 17024 ${DESTDIR}/radeon/liverpool_me.bin
-    python3 "${FILESDIR}"/resize_firmware.py ${DESTDIR}/radeon/hawaii_pfp.bin 17024 ${DESTDIR}/radeon/LIVERPOOL_pfp.bin
-	python3 "${FILESDIR}"/resize_firmware.py ${DESTDIR}/radeon/hawaii_me.bin 17024 ${DESTDIR}/radeon/LIVERPOOL_me.bin
-    for unit in mec mec2 sdma sdma1 uvd vce; do
-		cp -rvf ${DESTDIR}/amdgpu/kaveri_${unit}.bin ${DESTDIR}/amdgpu/liverpool_${unit}.bin
-	done
-
-    for unit in mec mec2 sdma sdma1 uvd vce; do
-		cp -rvf  ${DESTDIR}/radeon/kaveri_${unit}.bin  ${DESTDIR}/radeon/liverpool_${unit}.bin
-	done
-
-    for unit in mec mec2 sdma sdma1 uvd vce; do
-		cp -rvf ${DESTDIR}/radeon/KAVERI_${unit}.bin ${DESTDIR}/radeon/LIVERPOOL_${unit}.bin
-	done
 }
 
-linux-firmware-ps4linux-amd_package() {
+linux-firmware-amd_package() {
 	short_desc+=" - AMD CPU/GPU microcode"
 	nostrip=yes
 	pkg_install() {
@@ -100,7 +82,7 @@ linux-firmware-nvidia_package() {
 linux-firmware-network_package() {
 	short_desc+=" - network"
 	depends="linux-firmware-broadcom>=${version}_${revision}"
-	case "$XBPS_TARGET_MACHINE" in
+	case "$DULGE_TARGET_MACHINE" in
 		armv7*|aarch64*)
 			depends+=" linux-firmware-qualcomm>=${version}_${revision}"
 			;;

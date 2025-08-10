@@ -35,7 +35,7 @@ build_options="elogind"
 desc_option_elogind="Rootless Xorg support with elogind"
 
 # disable VBE on non-x86 systems
-case "$XBPS_TARGET_MACHINE" in
+case "$DULGE_TARGET_MACHINE" in
 	x86_64*|i686*) configure_args+=" -Dint10=x86emu" ;;
 	*) configure_args+=" -Dint10=false" ;;
 esac
@@ -45,7 +45,7 @@ esac
 LDFLAGS="-Wl,-z,lazy"
 
 pre_configure() {
-	case "$XBPS_TARGET_MACHINE" in
+	case "$DULGE_TARGET_MACHINE" in
 	*-musl)
 		export CFLAGS+=" -D__uid_t=uid_t -D__gid_t=gid_t"
 		;;

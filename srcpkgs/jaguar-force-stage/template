@@ -1,0 +1,18 @@
+# Template file for 'jaguar-force-stage'.
+pkgname=jaguar-force-stage
+version=0.1
+revision=2
+metapackage=yes
+short_desc="force the repository into staging mode"
+maintainer="TigerClips1 <spongebob1966@proton.me>"
+license="BSD-2-Clause"
+homepage="https://ps4jaguarlinux.site/"
+
+shlib_requires="force-stage.so.0.1"
+
+jaguar-force-stage-unstage_package() {
+	# shlib_provides="force-stage.so.0.1"
+	pkg_install() {
+		:
+	}
+}

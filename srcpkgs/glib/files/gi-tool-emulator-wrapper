@@ -1,0 +1,12 @@
+#!/bin/sh
+#
+# Check if we are running in an dulge-src environment and run the wrapper if that
+# is the case.
+if [ -n "$DULGE_CROSS_BASE" -a -n "$DULGE_TARGET_MACHINE" -a -n "$DULGE_VERSION" ]; then
+	# wrapper for @TOOL@, which runs the target version of it through qemu.
+	# gi-compile-repository, for example, writes out the raw content of a C struct to disk,
+	# and therefore is architecture dependent.
+	exec /usr/bin/gi-dulge-qemuwrapper ${DULGE_CROSS_BASE}/usr/bin/@TOOL@.wrapped "$@"
+fi
+
+exec /usr/bin/@TOOL@.wrapped "$@"

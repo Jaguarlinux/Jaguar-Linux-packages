@@ -1,0 +1,20 @@
+# Template file for 'nestopia'
+pkgname=nestopia
+version=1.53.1
+revision=1
+build_style=gnu-configure
+hostmakedepends="autoconf-archive automake pkg-config"
+makedepends="SDL2-devel gtk+3-devel libao-devel libarchive-devel
+ fltk-devel"
+depends="desktop-file-utils hicolor-icon-theme"
+short_desc="Portable NES/Famicom emulator written in C++"
+maintainer="TigerClips1 <spongebob1966@proton.me>"
+license="GPL-2.0-only"
+homepage="http://0ldsk00l.ca/nestopia/"
+changelog="https://raw.githubusercontent.com/0ldsk00l/nestopia/master/ChangeLog"
+distfiles="https://github.com/0ldsk00l/nestopia/archive/${version}.tar.gz"
+checksum=21aa45f6c608fe290d73fdec0e6f362538a975455b16a4cc54bcdd10962fff3e
+
+pre_configure() {
+	autoreconf -vif
+}

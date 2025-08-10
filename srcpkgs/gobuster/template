@@ -1,0 +1,16 @@
+# Template file for 'gobuster'
+pkgname=gobuster
+version=3.7.0
+revision=1
+build_style=go
+go_import_path=github.com/OJ/gobuster/v3
+short_desc="Directory, file and DNS busting tool"
+maintainer="TigerClips1 <spongebob1966@proton.me>"
+license="Apache-2.0"
+homepage="https://github.com/OJ/gobuster"
+distfiles="https://github.com/OJ/gobuster/archive/v${version}.tar.gz"
+checksum=893f1979b453d655880c19552e1f894110a661a4057a58e95a4d7505bf6d7fa8
+
+post_install() {
+	vdoc README.md
+}

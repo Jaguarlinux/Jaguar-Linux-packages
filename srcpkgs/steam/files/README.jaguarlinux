@@ -2,7 +2,7 @@ Steam on i686 should work without needing to install any extra packages.
 Steam on x86_64 requires support for OpenGL/Vulkan in 32bits mode,
 the 32bit packages are available in the multilib repository.
 
-	# dulge-install -S jaguar-repo-multilib{,-nonfree}
+	# dulge-install -S void-repo-multilib{,-nonfree}
 	# dulge-install -S
 
 Generic (for all systems):

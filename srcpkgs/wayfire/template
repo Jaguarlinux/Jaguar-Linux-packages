@@ -23,7 +23,7 @@ build_options="image"
 build_options_default="image"
 desc_option_image="Enable JPEG and PNG support"
 
-if [ "$XBPS_TARGET_LIBC" = "musl" ]; then
+if [ "$DULGE_TARGET_LIBC" = "musl" ]; then
 	makedepends+=" libexecinfo-devel"
 fi
 

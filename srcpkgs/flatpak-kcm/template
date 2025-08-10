@@ -1,0 +1,17 @@
+# Template file for 'flatpak-kcm'
+pkgname=flatpak-kcm
+version=6.4.3
+revision=1
+build_style=cmake
+configure_args="-DBUILD_TESTING=OFF -DKF6_HOST_TOOLING=/usr/lib/cmake
+ -DKDE_INSTALL_QTPLUGINDIR=lib/qt6/plugins"
+hostmakedepends="extra-cmake-modules pkg-config qt6-base gettext
+ kf6-kconfig kf6-kcmutils kf6-kpackage"
+makedepends="flatpak-devel kf6-kcmutils-devel kf6-kdeclarative-devel
+ kf6-ki18n-devel kf6-kconfig-devel kf6-kitemmodels-devel polkit-devel"
+short_desc="KDE Config Module for Flatpak Permissions"
+maintainer="TigerClips1 <spongebob1966@proton.me>"
+license="GPL-2.0-or-later, LGPL-2.1-or-later"
+homepage="https://invent.kde.org/plasma/flatpak-kcm"
+distfiles="${KDE_SITE}/plasma/${version}/${pkgname}-${version}.tar.xz"
+checksum=2b854759fd1125e47061cdad3aa164e3fec8bc101d4b6d3d1fa2d490774d2139

@@ -1,0 +1,14 @@
+# Template file for 'q'
+pkgname=q
+version=0.19.5
+revision=1
+build_style=go
+go_import_path="github.com/natesales/q"
+go_ldflags="-X main.version=${version}"
+short_desc="Tiny command line DNS client with support for many transport protocols"
+maintainer="TigerClips1 <spongebob1966@proton.me>"
+license="GPL-3.0-only"
+homepage="https://github.com/natesales/q"
+changelog="https://github.com/natesales/q/releases"
+distfiles="https://github.com/natesales/q/archive/refs/tags/v${version}.tar.gz"
+checksum=6d85b6e5ebb99a2c2e69dfba4fdb758b676664fde5af7cd258f4fdc2b6c4702a

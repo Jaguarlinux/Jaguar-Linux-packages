@@ -1,0 +1,14 @@
+# Template file for 'perl-Net-CIDR'
+pkgname=perl-Net-CIDR
+version=0.26
+revision=1
+build_style=perl-module
+hostmakedepends="perl"
+makedepends="${hostmakedepends}"
+depends="${makedepends}"
+short_desc="Net::CIDR - Manipulate IPv4/IPv6 netblocks in CIDR notation"
+maintainer="TigerClips1 <spongebob1966@proton.me>"
+license="Artistic-1.0-Perl, GPL-1.0-or-later"
+homepage="https://metacpan.org/release/Net-CIDR"
+distfiles="${CPAN_SITE}/Net/Net-CIDR-${version}.tar.gz"
+checksum=85ce0e6cefb71073bfab8a5d266b66ee7ccfaef084aed4307b0d604720bfd001

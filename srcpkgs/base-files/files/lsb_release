@@ -3,10 +3,10 @@
 # Compatibility script for FSG lsb_release v1.4 or newer
 #
 version="1.0"
-distributor_id="Jaguar Linux"
-release="1.0-systemd"
+distributor_id="JaguarLinux"
+description="Jaguar Linux"
+release="stable"
 codename="CyberGamerX"
-description="Your sleek, fast, and customizable Linux distribution for PS4."
 options=""
 short=0
 

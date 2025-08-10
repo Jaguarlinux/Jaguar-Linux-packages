@@ -52,7 +52,7 @@ desc_option_selinux="Enable SELinux integration"
 
 replaces="libpulseaudio-pipewire>=0"
 
-if [ "$XBPS_TARGET_ENDIAN" = "le" ]; then
+if [ "$DULGE_TARGET_ENDIAN" = "le" ]; then
 	makedepends+=" ldacBT-devel"
 else
 	configure_args+=" -Dbluez5-codec-ldac=disabled"

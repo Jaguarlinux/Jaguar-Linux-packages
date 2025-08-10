@@ -1,0 +1,13 @@
+# Template file for 'qView'
+pkgname=qView
+version=7.0
+revision=1
+build_style=qmake
+hostmakedepends="qt6-tools qt6-base"
+makedepends="qt6-base-devel"
+short_desc="Image viewer designed with minimalism and usability in mind"
+maintainer="TigerClips1 <spongebob1966@proton.me>"
+license="GPL-3.0-or-later"
+homepage="https://interversehq.com/qview/"
+distfiles="https://github.com/jurplel/qView/archive/${version}.tar.gz"
+checksum=93aefd3bf784ca7767b87057544731f79d8e50b69c3caa36fe767f2371576498

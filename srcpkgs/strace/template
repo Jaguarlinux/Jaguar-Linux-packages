@@ -26,7 +26,7 @@ fi
 # workound musl not defining off64_t
 CFLAGS="-D_LARGEFILE64_SOURCE"
 
-case "$XBPS_TARGET_MACHINE" in
+case "$DULGE_TARGET_MACHINE" in
 	aarch64*|ppc64*) configure_args+=" --enable-mpers=no" ;;
 	# work around https://github.com/strace/strace/issues/133
 	i686-musl) configure_args+=" --enable-mpers=no"; makedepends+=" libucontext-devel" ;;
@@ -34,13 +34,13 @@ case "$XBPS_TARGET_MACHINE" in
 esac
 
 pre_configure() {
-	if [ "$XBPS_TARGET_MACHINE" = "i686-musl" ]; then
+	if [ "$DULGE_TARGET_MACHINE" = "i686-musl" ]; then
 		vsed -i configure -e "s;libunwind_LIBS=$;&-lucontext;"
 	fi
 }
 
 do_check() {
-	if [ "$XBPS_CHECK_PKGS" = full ]; then
+	if [ "$DULGE_CHECK_PKGS" = full ]; then
 		# XXX: Some tests may fail inside of containers or if they are missing
 		# sufficient capabilities
 		make check

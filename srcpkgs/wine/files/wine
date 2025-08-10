@@ -6,15 +6,15 @@ wine32=/usr/bin/wine32
 wine64=/usr/bin/wine64
 
 wine32_hint () {
-    if [ "$(xbps-uhelper arch)" = "x86_64-musl" ]; then
+    if [ "$(dulge-uhelper arch)" = "x86_64-musl" ]; then
         echo "wine under musl supports both 64bit & 32bit under the new experimental WoW64 mode"
     else
         echo "it looks like wine-32bit is missing, you should install it."
-        if uname -a | grep "x86_64" > /dev/null && xbps-query -l | grep void-repo-multilib > /dev/null; then
+        if uname -a | grep "x86_64" > /dev/null && dulge-query -l | grep void-repo-multilib > /dev/null; then
             echo "the multilib repository needs to be enabled first.  as root, please"
-            echo "execute \"xbps-install -S void-repo-multilib && xbps-install -S wine-32bit\""
+            echo "execute \"dulge-install -S void-repo-multilib && dulge-install -S wine-32bit\""
         else
-            echo "as root, please execute \"xbps-install -S wine-32bit\""
+            echo "as root, please execute \"dulge-install -S wine-32bit\""
         fi
     fi
 }

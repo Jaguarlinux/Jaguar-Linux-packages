@@ -1,0 +1,20 @@
+# Template file for 'xmenu'
+pkgname=xmenu
+version=4.5.5
+revision=1
+build_style=gnu-makefile
+make_build_args="LOCALINC=$DULGE_CROSS_BASE/usr/include
+ LOCALLIB=$DULGE_CROSS_BASE/usr/lib
+ FREETYPEINC=$DULGE_CROSS_BASE/usr/include/freetype2
+ LDFLAGS+=\$(LIBS) CFLAGS+=\$(INCS)"
+makedepends="imlib2-devel libX11-devel libXft-devel libXinerama-devel"
+short_desc="X11 menu utility"
+maintainer="TigerClips1 <spongebob1966@proton.me>"
+license="MIT"
+homepage="https://github.com/phillbush/xmenu"
+distfiles="${homepage}/archive/v${version}.tar.gz"
+checksum=13fda8068d3886a590365d19d6ff84f04c0a4c9a516d79569000514067b4e77b
+
+post_install() {
+	vlicense LICENSE
+}

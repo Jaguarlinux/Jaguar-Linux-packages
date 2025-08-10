@@ -1,0 +1,30 @@
+# Template file for 'libbpf'
+pkgname=libbpf
+version=1.6.1
+revision=1
+build_wrksrc="src"
+build_style=gnu-makefile
+hostmakedepends="pkg-config"
+makedepends="elfutils-devel"
+short_desc="Library for working with (e)BPF"
+maintainer="TigerClips1 <spongebob1966@proton.me>"
+license="LGPL-2.1-only, BSD-2-Clause"
+homepage="https://github.com/libbpf/libbpf"
+distfiles="https://github.com/libbpf/libbpf/archive/refs/tags/v${version}.tar.gz"
+checksum=f6fa65c86f20d6d2d5d958f8bb8203a580a1c7496173714582300b724e37e338
+
+post_install() {
+	vlicense ../LICENSE
+	vlicense ../LICENSE.BSD-2-Clause
+}
+
+libbpf-devel_package() {
+	short_desc+=" - development files"
+	depends="${sourcepkg}>=${version}_${revision} elfutils-devel"
+	pkg_install() {
+		vmove usr/include
+		vmove usr/lib/*.a
+		vmove usr/lib/*.so
+		vmove usr/lib/pkgconfig
+	}
+}

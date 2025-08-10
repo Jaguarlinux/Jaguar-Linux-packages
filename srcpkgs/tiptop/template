@@ -1,0 +1,22 @@
+# Template file for 'tiptop'
+pkgname=tiptop
+version=2.3.1
+revision=2
+build_style=gnu-configure
+hostmakedepends="flex"
+makedepends="ncurses-devel libxml2-devel"
+short_desc="Performance monitoring tool using hardware counters"
+maintainer="TigerClips1 <spongebob1966@proton.me>"
+license="GPL-2.0-only"
+homepage="https://gitlab.inria.fr/rohou/tiptop"
+distfiles="https://files.inria.fr/pacap/tiptop/tiptop-$version.tar.gz"
+checksum=51c4449c95bba34f16b429729c2f58431490665d8093efaa8643b2e1d1084182
+CFLAGS="-I${DULGE_CROSS_BASE}/usr/include/libxml2"
+
+post_extract() {
+	vsed -i "s/\`uname -m\`/$DULGE_TARGET_MACHINE/" configure
+}
+
+post_install() {
+	vsconf tiptoprc
+}

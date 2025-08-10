@@ -41,12 +41,12 @@ if [ "$CROSS_BUILD" ]; then
 	hostmakedepends+=" glib"
 fi
 
-case "$XBPS_TARGET_MACHINE" in
+case "$DULGE_TARGET_MACHINE" in
 	arm*) configure_args+=" -Db_lto=false"
 esac
 
 post_patch() {
-	if [ "$XBPS_TARGET_LIBC" = musl ]; then
+	if [ "$DULGE_TARGET_LIBC" = musl ]; then
 		# Configure detects presence of open64 due to musl providing aliases for them in the linker, this is not correct.
 		# This was fixed in musl 1.2.x, but we are currently using 1.1.x
 		vsed -e "s/'open64',//g" -i meson.build

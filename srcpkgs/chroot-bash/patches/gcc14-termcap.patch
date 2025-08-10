@@ -17,3 +17,4 @@ index c4bff088e..cd500efd8 100644
  #if defined (HAVE_STRING_H)
  #include <string.h>
  #endif
+

@@ -34,7 +34,7 @@ _subdirs="$(vopt_if x11 vim-x11) $(vopt_if gtk3 gvim)
 alternatives="vim:vim:/usr/bin/vim-normal"
 
 post_patch() {
-	if [ "$XBPS_BUILD_ENVIRONMENT" = void-packages-ci ]; then
+	if [ "$DULGE_BUILD_ENVIRONMENT" = void-packages-ci ]; then
 		# Test_channel_lsp_mode() test fails in CI
 		vsed -e "/call RunServer('test_channel_lsp.py/d" -i vim-${version}/src/testdir/test_channel.vim
 	fi
@@ -57,7 +57,7 @@ do_configure() {
 
 	if [ "$CROSS_BUILD" ]; then
 		configure_args+="
-			--host=${XBPS_CROSS_TRIPLET}
+			--host=${DULGE_CROSS_TRIPLET}
 			vim_cv_toupper_broken=no vim_cv_terminfo=yes
 			vim_cv_tty_group=world vim_cv_getcwd_broken=no
 			vim_cv_stat_ignores_slash=yes

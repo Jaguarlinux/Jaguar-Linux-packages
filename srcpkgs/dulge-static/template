@@ -1,0 +1,35 @@
+# Template file for 'dulge-static'
+# NOTE: keep this package synchronized with "srcpkgs/dulge"
+pkgname=dulge-static
+version=0.60.5
+revision=1
+# only musl
+archs="*-musl"
+build_style=configure
+hostmakedepends="pkg-config"
+makedepends="libarchive-devel zlib-devel openssl-devel"
+depends="dulge-triggers"
+short_desc="DULGE package system utilities - static binaries"
+maintainer="TigerClips1 <spongebob1966@proton.me>"
+license="BSD-2-Clause, BSD-3-Clause, ISC"
+homepage="https://github.com/Jaguarlinux/dulge"
+distfiles="https://github.com/Jaguarlinux/dulge/archive/refs/tags/dulge1.0.tar.gz"
+# checksum=fba39edfdcfeb6f7e3f348a091453fefb087089999cf5bea20ea65ac6cf009dc
+
+do_configure() {
+	./configure --prefix=/usr --sysconfdir=/etc --enable-static
+}
+
+do_install() {
+	make DESTDIR=${wrksrc}/static-install install
+	vmkdir usr/bin
+	mv ${wrksrc}/static-install/usr/bin/*.static ${DESTDIR}/usr/bin
+	for _f in /var/db/dulge/keys/* ; do
+		vinstall "$_f" 0644 var/db/dulge/keys/
+	done
+}
+
+post_install() {
+	vlicense LICENSE
+	vlicense LICENSE.3RDPARTY
+}

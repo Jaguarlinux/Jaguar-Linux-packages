@@ -1,0 +1,19 @@
+# Template file for 'jaguar-repo-multilib'
+pkgname=jaguar-repo-multilib
+version=6
+revision=4
+metapackage=yes
+archs="x86_64"
+short_desc="Jaguar Linux drop-in file for the multilib repository"
+maintainer="TigerClips1 <spongebob1966@proton.me>"
+license="Public Domain"
+homepage="https://ps4jaguarlinux.site/"
+
+do_install() {
+	vmkdir usr/share/dulge.d
+	for f in multilib; do
+		echo "repository=https://mirror.ps4jaguarlinux.site/current/${f/-/\/}" > \
+			${DESTDIR}/usr/share/dulge.d/10-repository-${f}.conf
+	done
+}
+

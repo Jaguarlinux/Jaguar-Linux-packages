@@ -1,0 +1,18 @@
+# Template file for 'stress-ng'
+pkgname=stress-ng
+version=0.19.03
+revision=1
+build_style=gnu-makefile
+make_use_env=1
+short_desc="Load and stress a computer system"
+maintainer="TigerClips1 <spongebob1966@proton.me>"
+license="GPL-2.0-or-later"
+homepage="https://github.com/ColinIanKing/stress-ng/"
+distfiles="https://github.com/ColinIanKing/stress-ng/archive/refs/tags/V${version}.tar.gz"
+checksum=a5ddd9914a4aa0c4708035a475772cb7a6989f28829e608ad790d64849610ae6
+
+if [ "$DULGE_TARGET_LIBC" = "musl" ]; then
+	makedepends+=" musl-legacy-compat"
+elif [ "$DULGE_TARGET_LIBC" = "glibc" ]; then
+	makedepends+=" libxcrypt-devel"
+fi

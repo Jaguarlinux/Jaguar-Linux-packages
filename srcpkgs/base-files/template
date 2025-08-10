@@ -1,13 +1,13 @@
 # Template file for 'base-files'
 pkgname=base-files
-version=0.126
+version=0.145
 revision=1
 bootstrap=yes
 depends="dulge-triggers"
 short_desc="Jaguar Linux base system files"
 maintainer="TigerClips1 <spongebob1966@proton.me>"
 license="Public Domain"
-homepage="https://ps4jaguarlinux.site"
+homepage="https://ps4jaguarlinux.site/"
 conf_files="
 	/etc/inputrc
 	/etc/profile

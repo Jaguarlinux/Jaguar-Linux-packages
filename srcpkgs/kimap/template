@@ -1,0 +1,33 @@
+# Template file for 'kimap'
+pkgname=kimap
+version=25.04.2
+revision=1
+build_style=cmake
+configure_args="-DBUILD_TESTING=OFF -DKF6_HOST_TOOLING=/usr/lib/cmake
+ -DKDE_INSTALL_QTPLUGINDIR=lib/qt6/plugins
+ -DKDE_INSTALL_QMLDIR=lib/qt6/qml
+ -DECM_MKSPECS_INSTALL_DIR=/usr/lib/qt6/mkspecs/modules"
+hostmakedepends="extra-cmake-modules qt6-base qt6-tools kf6-kconfig
+ gettext kf6-kcoreaddons"
+makedepends="kf6-kio-devel kmime6-devel"
+depends="cyrus-sasl-modules"
+short_desc="Job-based API for interacting with IMAP servers"
+maintainer="TigerClips1 <spongebob1966@proton.me>"
+license="GPL-2.0-or-later, LGPL-2.1-or-later"
+homepage="https://community.kde.org/KDE_PIM"
+distfiles="${KDE_SITE}/release-service/${version}/src/kimap-${version}.tar.xz"
+checksum=7d2aa360a9c31ba61ba40c9460214a2ef6bfea35e5651729f855a202892667be
+
+do_check() {
+	: # XXX: QFATAL : FakeServerTest::testLoadScenario() Unable to start the server
+}
+
+kimap-devel_package() {
+	short_desc+=" - development files"
+	depends="${makedepends} ${sourcepkg}>=${version}_${revision}"
+	pkg_install() {
+		vmove usr/include
+		vmove usr/lib/cmake
+		vmove usr/lib/*.so
+	}
+}

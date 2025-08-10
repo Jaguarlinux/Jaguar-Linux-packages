@@ -23,14 +23,14 @@ _dev_depends="fftw-devel"
 # built-in resampler can, in some situations, sound slightly better, so keep
 # using it on them.
 # See https://github.com/breakfastquay/rubberband/issues/87#issuecomment-1607722278.
-if [ "$XBPS_TARGET_WORDSIZE" = 32 ]; then
+if [ "$DULGE_TARGET_WORDSIZE" = 32 ]; then
 	_dev_depends+=" libsamplerate-devel"
 	configure_args+=" -Dresampler=libsamplerate"
 fi
 
 makedepends+=" $_dev_depends"
 
-if [ "$XBPS_CHECK_PKGS" ]; then
+if [ "$DULGE_CHECK_PKGS" ]; then
 	configure_args+=" -Dtests=enabled"
 else
 	configure_args+=" -Dtests=disabled"

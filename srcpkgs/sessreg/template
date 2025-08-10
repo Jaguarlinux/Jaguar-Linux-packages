@@ -12,7 +12,7 @@ maintainer="TigerClips1 <spongebob1966@proton.me>"
 distfiles="${XORG_SITE}/app/${pkgname}-${version}.tar.xz"
 checksum=4e85b52f4f65a93449753bfb00ceb5d77f3317e24d07dc23147f2f116c785350
 
-case "$XBPS_TARGET_MACHINE" in
+case "$DULGE_TARGET_MACHINE" in
 	*-musl)
 		# musl does not define _WTMPX_FILE, use WTMP_FILE instead.
 		CFLAGS="-D_WTMPX_FILE=WTMP_FILE -D_PATH_WTMPX=_PATH_WTMP"

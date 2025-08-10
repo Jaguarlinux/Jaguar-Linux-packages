@@ -7,7 +7,7 @@ bootstrap=yes
 build_style=gnu-makefile
 checkdepends="python3"
 short_desc="Extremely fast compression algorithm"
-maintainer="TigerClips1 <TigerClips1@spongebob1966@proton.me>"
+maintainer="TigerClips1 <spongebob1966@proton.me>"
 # all files under source 'lib' directory are BSD-2, others are GPLv2+
 license="BSD-2-Clause AND GPL-2.0-or-later"
 homepage="https://lz4.github.io/lz4"

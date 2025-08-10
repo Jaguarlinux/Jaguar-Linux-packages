@@ -1,0 +1,18 @@
+# Template file for 'ast-grep'
+pkgname=ast-grep
+version=0.39.1
+revision=1
+build_style=cargo
+configure_args="--package=ast-grep"
+short_desc="Fast and polyglot tool for code searching, linting, and rewriting"
+maintainer="TigerClips1 <spongebob1966@proton.me>"
+license="MIT"
+homepage="https://ast-grep.github.io"
+changelog="https://raw.githubusercontent.com/ast-grep/ast-grep/main/CHANGELOG.md"
+distfiles="https://github.com/ast-grep/ast-grep/archive/refs/tags/${version}.tar.gz"
+checksum=b556b38fec358216fb1cdf1cb4825e689176c7c50caad45be19755dafbdf3f55
+
+do_install() {
+	vbin target/${RUST_TARGET}/release/ast-grep
+	vlicense LICENSE
+}

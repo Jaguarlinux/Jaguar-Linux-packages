@@ -1,0 +1,36 @@
+# Template file for 'kmymoney'
+pkgname=kmymoney
+version=5.2.0
+revision=1
+build_style=cmake
+configure_args="-DDESKTOPTOJSON_EXECUTABLE=/usr/bin/desktoptojson
+ -DENABLE_ADDRESSBOOK=OFF -DBUILD_TESTING=OFF"
+hostmakedepends="extra-cmake-modules kconfig kcoreaddons kdoctools pkg-config
+ python3 qt5-host-tools qt5-qmake gettext"
+makedepends="aqbanking-devel gmp-devel gmpxx-devel gpgmeqt-devel
+ gwenhywfar-devel gwenhywfar-qt5 kactivities5-devel kcmutils-devel
+ kdewebkit-devel kdiagram-devel kholidays-devel kitemmodels-devel
+ kross-devel libalkimia-devel libical-devel sqlcipher-devel
+ libofx-devel kio-devel kbookmarks-devel kwidgetsaddons-devel
+ qtkeychain-qt5-devel opensp-devel"
+depends="shared-mime-info"
+short_desc="Personal finance manager"
+maintainer="TigerClips1 <spongebob1966@proton.me>"
+license="GPL-2.0-or-later"
+homepage="https://kmymoney.org"
+distfiles="${KDE_SITE}/kmymoney/${version}/${pkgname}-${version}.tar.xz"
+checksum=f308b0a2297f22f43d9bbe46b4c7dc6aac08bd594454e635a844d06abda4d33c
+
+post_extract() {
+	if [ "$CROSS_BUILD" ]; then
+		vsed /find_package\(LibIcal\)/d -i CMakeLists.txt
+	fi
+}
+
+kmymoney-devel_package() {
+	short_desc+=" - development files"
+	depends="${sourcepkg}>=${version}_${revision}"
+	pkg_install() {
+		vmove usr/include
+	}
+}

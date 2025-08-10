@@ -1,0 +1,21 @@
+# Template file for 'lazygit'
+pkgname=lazygit
+version=0.53.0
+revision=1
+build_style=go
+go_import_path=github.com/jesseduffield/lazygit
+go_ldflags="-X main.version=${version} -X main.buildSource=voidlinux"
+make_check_args="-skip=TestIntegration"
+depends="git"
+short_desc="Simple terminal UI for git commands"
+maintainer="TigerClips1 <spongebob1966@proton.me>"
+license="MIT"
+homepage="https://github.com/jesseduffield/lazygit"
+changelog="https://github.com/jesseduffield/lazygit/releases"
+distfiles="https://github.com/jesseduffield/lazygit/archive/refs/tags/v${version}.tar.gz"
+checksum=c160053ae99cb741c6d4295d52f917e492168b204780f9ad1afe8f984c6604a6
+make_check_pre="env PATH=/usr/libexec/chroot-git:${PATH}"
+
+post_install() {
+	vlicense LICENSE
+}

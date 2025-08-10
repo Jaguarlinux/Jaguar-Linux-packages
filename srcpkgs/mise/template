@@ -1,0 +1,29 @@
+# Template file for 'mise'
+pkgname=mise
+version=2025.7.1
+revision=1
+build_style=cargo
+hostmakedepends="pkg-config"
+makedepends="openssl-devel libzstd-devel bzip2-devel"
+short_desc="Polyglot runtime manager (asdf rust clone)"
+maintainer="TigerClips1 <spongebob1966@proton.me>"
+license="MIT"
+homepage="https://github.com/jdx/mise"
+changelog="https://github.com/jdx/mise/releases"
+distfiles="https://github.com/jdx/mise/archive/v${version}.tar.gz>${pkgname}-${version}.tar.gz"
+checksum=744235ded50ef72598b26a5cea7ca16d9d526be410ccffe19b9011e22fca46a5
+
+post_install() {
+	vlicense LICENSE
+	vman man/man1/mise.1
+	vdoc README.md
+	vcompletion completions/mise.bash bash mise
+	vcompletion completions/mise.fish fish mise
+	vcompletion completions/_mise zsh mise
+}
+
+rtx_package() {
+	depends="${sourcepkg}>=${version}_${revision}"
+	short_desc+=" (transitional dummy package)"
+	metapackage=yes
+}

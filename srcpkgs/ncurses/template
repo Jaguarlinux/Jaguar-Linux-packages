@@ -1,7 +1,7 @@
 # Template file for 'ncurses'
 pkgname=ncurses
 version=6.5
-revision=1
+revision=2
 bootstrap=yes
 configure_args="--enable-big-core"
 short_desc="System V Release 4.0 curses emulation library"
@@ -94,7 +94,7 @@ do_install() {
 	rm -f ${DESTDIR}/usr/lib/terminfo
 
 	if [ "$CROSS_BUILD" ]; then
-		sed -i -e "s,-L$XBPS_CROSS_BASE,-L,g" ${DESTDIR}/usr/bin/ncursesw6-config
+		sed -i -e "s,-L$DULGE_CROSS_BASE,-L,g" ${DESTDIR}/usr/bin/ncursesw6-config
 	fi
 }
 

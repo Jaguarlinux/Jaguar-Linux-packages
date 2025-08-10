@@ -39,7 +39,7 @@ do_install() {
 		_file="${_file##*/}"
 		ln -s "../$_file" "$DESTDIR/usr/share/zoneinfo/posix/$_file"
 	done
-	# Because TZ=../zoneinfo-posix/posix/posix" is stupid
+	# Because TZ=../zoneinfo-posix/posix/posix" is stupid
 	rm -f "$DESTDIR/usr/share/zoneinfo-posix"
 	ln -s zoneinfo/posix "$DESTDIR/usr/share/zoneinfo-posix"
 	# Backward compatible links

@@ -6,7 +6,7 @@ depends="bsdtar rpm>=4.17.1_3"
 short_desc="Script to convert or extract RPM archives"
 maintainer="TigerClips1 <spongebob1966@proton.me>"
 license="BSD-2-Clause"
-homepage="http://www.voidlinux.org"
+homepage="https://ps4jaguarlinux.site/"
 
 do_install() {
 	vbin ${FILESDIR}/rpmextract

@@ -1,0 +1,15 @@
+# Template file for 'iana-etc'
+pkgname=iana-etc
+reverts="202001016_1"
+version=20250618
+revision=1
+bootstrap=yes
+short_desc="Unix /etc/services and /etc/protocols files"
+maintainer="TigerClips1 <spongebob1966@proton.me>"
+license="Public Domain"
+homepage="https://www.iana.org/protocols"
+
+do_install() {
+	vconf ${FILESDIR}/protocols
+	vconf ${FILESDIR}/services
+}

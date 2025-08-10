@@ -1,0 +1,12 @@
+# Template file for 'oxygen-sounds'
+pkgname=oxygen-sounds
+version=6.4.3
+revision=1
+build_style=cmake
+hostmakedepends="extra-cmake-modules"
+short_desc="Oxygen Sound Theme"
+maintainer="TigerClips1 <spongebob1966@proton.me>"
+license="LGPL-3.0-or-later"
+homepage="https://invent.kde.org/plasma/oxygen-sounds"
+distfiles="${KDE_SITE}/plasma/${version}/${pkgname}-${version}.tar.xz"
+checksum=440566f9a84c9ce90e04b561ab97909838b519c83f7deeb574d05c933baf2e2b

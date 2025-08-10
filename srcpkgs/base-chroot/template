@@ -1,6 +1,6 @@
 # Template file for 'base-chroot'
 pkgname=base-chroot
-version=1.0
+version=0.67
 revision=3
 bootstrap=yes
 metapackage=yes

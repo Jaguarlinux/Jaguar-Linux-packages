@@ -11,7 +11,7 @@ appendpath () {
     esac
 }
 
-# Set our default path (/usr/sbin:/sbin:/bin included for non-Jaguar chroots)
+# Set our default path (/usr/sbin:/sbin:/bin included for non-Void chroots)
 appendpath '/usr/local/sbin'
 appendpath '/usr/local/bin'
 appendpath '/usr/bin'

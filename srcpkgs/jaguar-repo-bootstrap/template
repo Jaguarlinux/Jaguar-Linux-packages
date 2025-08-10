@@ -1,0 +1,20 @@
+# Template file for 'jaguar-repo-bootstrap'
+pkgname=jaguar-repo-bootstrap
+version=1
+revision=1
+metapackage=yes
+short_desc="Jaguar Linux drop-in file for the bootstrap repository"
+maintainer="TigerClips1 <spongebob1966@proton.me>"
+license="Public Domain"
+homepage="https://ps4jaguarlinux.site/"
+repository=bootstrap
+
+do_install() {
+	vmkdir usr/share/dulge.d
+	case "$DULGE_TARGET_MACHINE" in
+		*)
+			echo "repository=https://mirror.ps4jaguarlinux.site/current/bootstrap/" > \
+				${DESTDIR}/usr/share/dulge.d/00-repository-bootstrap.conf
+			;;
+	esac
+}

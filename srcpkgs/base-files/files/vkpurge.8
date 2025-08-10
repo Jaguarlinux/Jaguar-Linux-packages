@@ -18,9 +18,9 @@ The
 .Nm
 utility lists and removes removable kernel versions left
 behind by
-.Xr xbps-install 1
+.Xr dulge-install 1
 and
-.Xr xbps-remove 1 .
+.Xr dulge-remove 1 .
 .Nm
 runs the appropriate removal hooks and deletes the kernel,
 modules and other miscellaneous files.
@@ -31,7 +31,7 @@ only lists or removes kernel versions that are:
 .It
 not currently booted.
 .It
-not provided by any installed xbps package.
+not provided by any installed dulge package.
 .El
 .Pp
 The
@@ -65,8 +65,8 @@ The following command will delete the kernel versions matching the pattern and a
 # vkpurge rm '2.6.*' 4.3.4_1
 .Ed
 .Sh SEE ALSO
-.Xr xbps-install 1 ,
-.Xr xbps-remove 1
+.Xr dulge-install 1 ,
+.Xr dulge-remove 1
 .Sh BUGS
 There is no support for all kernels. Specific series, like rpi-kernel, are not
 supported yet.
