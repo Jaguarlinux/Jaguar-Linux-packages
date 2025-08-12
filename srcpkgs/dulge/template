@@ -9,7 +9,7 @@ maintainer="TigerClips1 <spongebob1966@proton.me>"
 license="BSD-2-Clause, BSD-3-Clause, ISC"
 homepage="https://github.com/Jaguarlinux/dulge"
 distfiles="https://github.com/Jaguarlinux/dulge/archive/${version}.tar.gz"
-checksum=fba39edfdcfeb6f7e3f348a091453fefb087089999cf5bea20ea65ac6cf009dc
+checksum=000f0af1ad5cb803d90c2580ea32c31ede86402894fbd538bff71f8437c09bbf
 
 hostmakedepends="pkgconf"
 checkdepends="kyua"
