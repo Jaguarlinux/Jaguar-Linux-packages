@@ -13,7 +13,8 @@ short_desc="DULGE package system utilities - static binaries"
 maintainer="TigerClips1 <spongebob1966@proton.me>"
 license="BSD-2-Clause, BSD-3-Clause, ISC"
 homepage="https://github.com/Jaguarlinux/dulge"
-distfiles="https://github.com/Jaguarlinux/dulge/archive/refs/tags/dulge1.0.tar.gz"
+distfiles="https://github.com/Jaguarlinux/dulge/archive/refs/tags/${version}.tar.gz"
+checksum=000f0af1ad5cb803d90c2580ea32c31ede86402894fbd538bff71f8437c09bbf
 
 do_configure() {
 	./configure --prefix=/usr --sysconfdir=/etc --enable-static

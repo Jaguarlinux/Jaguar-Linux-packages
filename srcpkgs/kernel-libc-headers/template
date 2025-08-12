@@ -1,14 +1,14 @@
 # Template file for 'kernel-libc-headers'
 pkgname=kernel-libc-headers
-version=6.14
+version=6.15.4
 revision=1
 bootstrap=yes
 short_desc="Linux API headers for userland development"
 maintainer="TigerClips1 <spongebob1966@proton.me>"
 license="GPL-2.0-only"
 homepage="http://www.kernel.org"
-distfiles="${KERNEL_SITE}/kernel/v${version%%.*}.x/linux-${version}.tar.xz"
-checksum=a294b683e7b161bb0517bb32ec7ed1d2ea7603dfbabad135170ed12d00c47670
+distfiles="https://github.com/crashniels/linux/archive/refs/heads/ps4-linux-6.15.y.zip"
+checksum=662fcb65a97c7a0cd04833a455e193b7de41269e0271016d66a657d5bb66d598
 
 if [ "$CHROOT_READY" ]; then
 	hostmakedepends="perl"
