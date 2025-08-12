@@ -1,6 +1,6 @@
 # Template file for 'dulge'
 pkgname=dulge
-version=1.0
+version=0.60.5
 revision=1
 bootstrap=yes
 build_style=configure
