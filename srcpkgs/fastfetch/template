@@ -14,7 +14,7 @@ license="MIT"
 homepage="https://github.com/fastfetch-cli/fastfetch"
 changelog="https://github.com/fastfetch-cli/fastfetch/raw/dev/CHANGELOG.md"
 distfiles="https://github.com/Jaguarlinux/fastfetch-jaguarlinux/archive/refs/tags/fastfetch-jag-1.0.tar.gz"
-# checksum=912692fb4ffa34b10809909e3a774e8193751554f77550d6ae126892b029c021
+checksum=d3a18888ce2a7b8540abbb75e80e280e89bbb95d4e2d8400ec304d0ea3bfe810
 
 if [ -n "$DULGE_CHECK_PKGS" ]; then
 	configure_args+=" -DBUILD_TESTS=ON"

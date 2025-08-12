@@ -11,7 +11,7 @@ maintainer="TigerClips1 <spongebob1966@proton.me>"
 license="MIT"
 homepage="https://dri.freedesktop.org/"
 distfiles="https://github.com/Jaguarlinux/ps4linux-libdrm/archive/refs/tags/ps4libdrm2.4.125.tar.gz"
-#checksum=49c077f3938147e7c321fe89255eb189c1be68f6ed0aa36e29d38e3db0e84e08
+checksum=e79e430d8442462fd26bd36826b483818bcd2069c0952291f4cf7d31fd0b431b
 
 case "$DULGE_TARGET_MACHINE" in
 	aarch64*) configure_args+=" -Dvc4=enabled";;

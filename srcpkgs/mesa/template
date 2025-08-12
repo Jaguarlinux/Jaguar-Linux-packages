@@ -24,7 +24,7 @@ license="MIT, LGPL-2.1-or-later"
 homepage="https://www.mesa3d.org/"
 changelog="https://docs.mesa3d.org/relnotes.html"
 distfiles="https://github.com/Jaguarlinux/mesa-ps4linux-upstream/archive/refs/tags/ps4linux-mesa-stable-5.4.tar.gz"
-# checksum=ffcb6cadb5fd356d56008e6308641dfe4b2929f30139f6585436ca6e3cddba7f
+checksum=42b7f7bc0c883a0bbac65506c342f066205173f92ff2f044d171bbd3ffcf2ede
 
 build_helper="qemu"
 build_options="wayland"
