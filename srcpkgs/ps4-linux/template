@@ -1,5 +1,5 @@
-# Template file for 'ps4-linux'
-pkgname=ps4-linux
+# Template file for 'linux'
+pkgname=linux
 version=6.15.4
 revision=1
 short_desc="ps4-Linux kernel and modules (${version%.*} series)"
@@ -8,11 +8,11 @@ license="GPL-2.0-only"
 homepage="https://www.kernel.org"
 
 case "${version##*.}" in
-rc*) distfiles="https://github.com/crashniels/linux/archive/refs/heads/ps4-linux-6.15.y.zip" ;;
+rc*) distfiles="https://github.com/Jaguarlinux/jaguarlinux-kernel/archive/refs/tags/ps4linux-6.15.tar.gz" ;;
 *)
 esac
 
-checksum="662fcb65a97c7a0cd04833a455e193b7de41269e0271016d66a657d5bb66d598"
+checksum="e42a3470b58a8524268f79781ca21d07a82f60ea665672a7535b7ac21a9a4295"
 
 python_version=3
 
@@ -286,7 +286,7 @@ do_install() {
 	rm -f ${DESTDIR}/lib
 }
 
-ps4-linux-headers_package() {
+linux-headers_package() {
 	preserve=yes
 	nostrip=yes
 	noshlibprovides=yes
@@ -297,7 +297,7 @@ ps4-linux-headers_package() {
 	}
 }
 
-ps4-linux-dbg_package() {
+linux-dbg_package() {
 	preserve=yes
 	nostrip=yes
 	noverifyrdeps=yes

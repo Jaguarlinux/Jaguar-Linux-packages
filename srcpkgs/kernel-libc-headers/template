@@ -7,8 +7,8 @@ short_desc="Linux API headers for userland development"
 maintainer="TigerClips1 <spongebob1966@proton.me>"
 license="GPL-2.0-only"
 homepage="http://www.kernel.org"
-distfiles="https://github.com/crashniels/linux/archive/refs/heads/ps4-linux-6.15.y.zip"
-checksum=662fcb65a97c7a0cd04833a455e193b7de41269e0271016d66a657d5bb66d598
+distfiles="https://github.com/Jaguarlinux/jaguarlinux-kernel/archive/refs/tags/ps4linux-6.15.tar.gz"
+checksum=e42a3470b58a8524268f79781ca21d07a82f60ea665672a7535b7ac21a9a4295
 
 if [ "$CHROOT_READY" ]; then
 	hostmakedepends="perl"
