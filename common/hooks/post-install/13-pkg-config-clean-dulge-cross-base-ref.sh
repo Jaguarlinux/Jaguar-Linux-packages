@@ -14,7 +14,7 @@ hook() {
 		if [ -f "$f" ]; then
 			# Sample sed script
 			# s,/usr/armv7l-linux-musleabihf/usr,/usr,g
-			# trailing /usr to avoid clashing with
+			# trailing /usr to ajaguar clashing with
 			# other $DULGE_CROSS_BASE and $DULGE_CROSS_TRIPLET.
 			sed -i --follow-symlinks \
 				-e "s,$DULGE_CROSS_BASE/usr,/usr,g" "$f"

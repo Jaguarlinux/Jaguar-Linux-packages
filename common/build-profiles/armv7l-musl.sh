@@ -1,0 +1,7 @@
+DULGE_TARGET_CFLAGS="-march=armv7-a -mfpu=vfpv3 -mfloat-abi=hard"
+DULGE_TARGET_CXXFLAGS="$DULGE_CXXFLAGS"
+DULGE_TARGET_FFLAGS="$DULGE_TARGET_CFLAGS"
+DULGE_TRIPLET="armv7l-linux-musleabihf"
+DULGE_RUST_TARGET="armv7-unknown-linux-musleabihf"
+DULGE_ZIG_TARGET="arm-linux-musleabihf"
+DULGE_ZIG_CPU="generic+v7a+vfp3"

@@ -36,8 +36,8 @@ if [ "$sourcepkg" != "$PKGNAME" ]; then
     pkgname=$PKGNAME
 fi
 
-if [ -s $DULGE_MASTERDIR/.DULGE_chroot_init ]; then
-    export DULGE_ARCH=$(<$DULGE_MASTERDIR/.DULGE_chroot_init)
+if [ -s $DULGE_MASTERDIR/.dulge_chroot_init ]; then
+    export DULGE_ARCH=$(<$DULGE_MASTERDIR/.dulge_chroot_init)
 fi
 
 # Run do-pkg hooks.

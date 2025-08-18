@@ -1,0 +1,12 @@
+# Cross build profile for MIPS32 BE soft float.
+
+DULGE_TARGET_MACHINE="mips-musl"
+DULGE_TARGET_QEMU_MACHINE="mips"
+DULGE_CROSS_TRIPLET="mips-linux-musl"
+DULGE_CROSS_CFLAGS="-mtune=mips32r2 -mabi=32 -msoft-float"
+DULGE_CROSS_CXXFLAGS="$DULGE_CROSS_CFLAGS"
+DULGE_CROSS_FFLAGS="$DULGE_CROSS_CFLAGS"
+DULGE_CROSS_RUSTFLAGS="--sysroot=${DULGE_CROSS_BASE}/usr"
+DULGE_CROSS_RUST_TARGET="mips-unknown-linux-musl"
+DULGE_CROSS_ZIG_TARGET="mips-linux-musl"
+DULGE_CROSS_ZIG_CPU="generic+soft_float"

@@ -33,4 +33,4 @@ if [ -z "$MASTERDIR" ] || [ -z "$DISTDIR" ]; then
 	exit 1
 fi
 
-exec dulge-uchroot $EXTRA_ARGS -b $DISTDIR:/Jaguar-Linux-packages ${HOSTDIR:+-b $HOSTDIR:/host} -- $MASTERDIR $CMD $@
+exec dulge-uchroot $EXTRA_ARGS -b $DISTDIR:/jaguar-packages ${HOSTDIR:+-b $HOSTDIR:/host} -- $MASTERDIR $CMD $@

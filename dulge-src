@@ -35,7 +35,7 @@ bootstrap
 
 bootstrap-update
     Updates bootstrap packages with latest versions available from registered
-    repositories in the dulge configuration file.
+    repositories in the DULGE configuration file.
 
 consistency-check
     Runs a consistency check on all packages
@@ -130,7 +130,7 @@ show-var <var>
     Prints the value of <var> if it's defined in dulge-src.
 
 show-repo-updates
-    Prints the list of outdated packages in dulge repositories.
+    Prints the list of outdated packages in DULGE repositories.
 
 show-sys-updates
     Prints the list of outdated packages in your system.
@@ -199,7 +199,7 @@ $(print_cross_targets)
     Absolute path to a directory to be bind mounted at <masterdir>/host.
     The host directory stores binary packages, sources and package dependencies
     downloaded from remote repositories.
-    If unset defaults to Jaguar-Linux-packages/hostdir.
+    If unset defaults to jaguar-packages/hostdir.
 
 -h  Usage output.
 
@@ -214,7 +214,7 @@ $(print_cross_targets)
 -m  <masterdir>
     Absolute path to a directory to be used as masterdir.
     The masterdir is the main directory to build/store/compile packages.
-    If unset defaults to Jaguar-Linux-packages/masterdir-<host>.
+    If unset defaults to jaguar-packages/masterdir-<host>.
 
 -N  Disable use of remote repositories to resolve dependencies.
 
@@ -458,7 +458,7 @@ check_reqhost_utils
 #
 if [ "$IN_CHROOT" ]; then
     readonly DULGE_CONFIG_FILE=/etc/dulge/dulge-src.conf
-    readonly DULGE_DISTDIR=/Jaguar-Linux-packages
+    readonly DULGE_DISTDIR=/jaguar-packages
     readonly DULGE_MASTERDIR=/
     readonly DULGE_HOSTDIR=/host
 else
@@ -489,7 +489,7 @@ fi
 [ -s "$DULGE_CONFIG_FILE" ] && . $DULGE_CONFIG_FILE &>/dev/null
 
 # show colors unconditionally in CI
-[ "$DULGE_BUILD_ENVIRONMENT" = Jaguar-Linux-packages-ci ] && export NOCOLORS=
+[ "$DULGE_BUILD_ENVIRONMENT" = jaguar-packages-ci ] && export NOCOLORS=
 
 # Set options passed on command line, after configuration files have been read
 [ -n "$DULGE_ARG_BUILD_ONLY_ONE_PKG" ] && DULGE_BUILD_ONLY_ONE_PKG=yes
@@ -523,6 +523,13 @@ fi
 if [ -z "$DULGE_MACHINE" ]; then
     DULGE_MACHINE=$(dulge-uhelper -C /dev/null arch)
     # default to the same libc when -a is given but not -A
+    if [ -n "$DULGE_CROSS_BUILD" ]; then
+        if [ -z "${DULGE_CROSS_BUILD##*-musl}" ]; then
+            DULGE_MACHINE="${DULGE_MACHINE%-musl}-musl"
+        else
+            DULGE_MACHINE="${DULGE_MACHINE%-musl}"
+        fi
+    fi
 fi
 
 export DULGE_BUILD_ONLY_ONE_PKG DULGE_SKIP_REMOTEREPOS DULGE_BUILD_FORCEMODE \
@@ -732,7 +739,7 @@ fi
 if [ "$DULGE_CCACHE" ]; then
     export CCACHEPATH="/usr/lib/ccache/bin"
     export CCACHE_DIR="$DULGE_HOSTDIR/ccache"
-    # A jaguar not using cached files just due to compiler mtime
+    # Ajaguar not using cached files just due to compiler mtime
     # changes when e.g. bootstrapping
     export CCACHE_COMPILERCHECK=content CCACHE_COMPRESS=1
     export PATH="$CCACHEPATH:$PATH"

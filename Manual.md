@@ -1,7 +1,7 @@
 # The DULGE source packages manual
 
 This article contains an exhaustive manual of how to create new source
-packages for DULGE, the `Jaguar Linux` native packaging system.
+packages for DULGE, the ` Jaguar Linux` native packaging system.
 
 *Table of Contents*
 
@@ -44,7 +44,7 @@ packages for DULGE, the `Jaguar Linux` native packaging system.
 		* [Font packages](#pkgs_font)
 	* [Renaming a package](#pkg_rename)
 	* [Removing a package](#pkg_remove)
-	* [dulge Triggers](#DULGE_triggers)
+	* [DULGE Triggers](#dulge_triggers)
 		* [appstream-cache](#triggers_appstream_cache)
 		* [binfmts](#triggers_binfmts)
 		* [dkms](#triggers_dkms)
@@ -70,7 +70,6 @@ packages for DULGE, the `Jaguar Linux` native packaging system.
 		* [update-desktopdb](#triggers_update_desktopdb)
 		* [x11-fonts](#triggers_x11_fonts)
 		* [xml-catalog](#triggers_xml_catalog)
-	* [Jaguar specific documentation](#documentation)
 	* [Notes](#notes)
 	* [Contributing via git](#contributing)
 	* [Help](#help)
@@ -78,7 +77,7 @@ packages for DULGE, the `Jaguar Linux` native packaging system.
 <a id="Introduction"></a>
 ### Introduction
 
-The `Jaguar-Linux-packages` repository contains all the
+The `jaguar-packages` repository contains all the
 recipes to download, compile and build binary packages for Jaguar Linux.
 These `source` package files are called `templates`.
 
@@ -101,7 +100,7 @@ version=1.0
 revision=1
 build_style=gnu-configure
 short_desc="A short description max 72 chars"
-maintainer="TigerClips1 <spongebob1966@proton.me>"
+maintainer="name <email>"
 license="GPL-3.0-or-later"
 homepage="http://www.foo.org"
 distfiles="http://www.foo.org/foo-${version}.tar.gz"
@@ -114,7 +113,7 @@ generated with the definitions specified on it.
 
 Don't worry if anything is not clear as it should be. The reserved `variables`
 and `functions` will be explained later. This `template` file should be created
-in a directory matching `$pkgname`, Example: `Jaguar-Linux-packages/srcpkgs/foo/template`.
+in a directory matching `$pkgname`, Example: `jaguar-packages/srcpkgs/foo/template`.
 
 If everything went fine after running
 
@@ -229,7 +228,7 @@ Programs put executables under /usr/bin (or in very special cases in other
 .../bin directories)
 
 For those packages the upstream packages name should be used. Remember that
-in contrast to many other distributions, Jaguar doesn't lowercase package names.
+in contrast to many other distributions, jaguar doesn't lowercase package names.
 As a rule of thumb, if the tar.gz of a package contains uppercase letter, then
 the package name should contain them too; if it doesn't, the package name
 is lowercase.
@@ -316,6 +315,7 @@ The following functions are defined by `dulge-src` and can be used on any templa
 	`${FILESDIR}/$service`, containing `exec vlogger -t $service -p $facility`.
 	if a second argument is not specified, the `daemon` facility is used.
 	For more information about `vlogger` and available values for the facility,
+	see [vlogger(8)](https://man.jaguarlinux.org/vlogger.8).
 
 - *vsed()* `vsed -i <file> -e <regex>`
 
@@ -394,7 +394,7 @@ in this directory such as `${DULGE_BUILDDIR}/${wrksrc}`.
 
 - `DULGE_ENDIAN` The machine's endianness ("le" or "be").
 
-- `DULGE_LIBC` The machine's C library ("glibc").
+- `DULGE_LIBC` The machine's C library ("glibc" or "musl").
 
 - `DULGE_WORDSIZE` The machine's word size in bits (32 or 64).
 
@@ -408,7 +408,7 @@ in this directory such as `${DULGE_BUILDDIR}/${wrksrc}`.
 
 - `DULGE_TARGET_ENDIAN` The target machine's endianness ("le" or "be").
 
-- `DULGE_TARGET_LIBC` The target machine's C library ("glibc" or ).
+- `DULGE_TARGET_LIBC` The target machine's C library ("glibc" or "musl").
 
 - `DULGE_TARGET_WORDSIZE` The target machine's word size in bits (32 or 64).
 
@@ -422,7 +422,7 @@ in this directory such as `${DULGE_BUILDDIR}/${wrksrc}`.
 
 - `DULGE_RUST_TARGET` The target architecture triplet used by `rustc` and `cargo`.
 
-- `DULGE_BUILD_ENVIRONMENT` Enables continuous-integration-specific operations. Set to `Jaguar-Linux-packages-ci` if in continuous integration.
+- `DULGE_BUILD_ENVIRONMENT` Enables continuous-integration-specific operations. Set to `jaguar-packages-ci` if in continuous integration.
 
 <a id="available_vars"></a>
 ### Available variables
@@ -513,7 +513,7 @@ can be separated by whitespaces. The files must end in `.tar.lzma`, `.tar.xz`,
 Example:
 	distfiles="http://foo.org/foo-1.0.tar.gz http://foo.org/bar-1.0.tar.gz>bar.tar.gz"
 
-  To aJaguar repetition, several variables for common hosting sites
+  To ajaguar repetition, several variables for common hosting sites
   exist:
 
   | Variable         | Value                                           |
@@ -770,6 +770,15 @@ Prepending a pattern with a tilde means disallowing build on the indicated archs
 The first matching pattern is taken to allow/deny build. When no pattern matches,
 the package is built if the last pattern includes a tilde.
 Examples:
+
+	```
+	# Build package only for musl architectures
+	archs="*-musl"
+	# Build package for x86_64-musl and any non-musl architecture
+	archs="x86_64-musl ~*-musl"
+	# Default value (all arches)
+	archs="*"
+	```
 A special value `noarch` used to be available, but has since been removed.
 
 - `nocheckperms` If set, dulge-src will not fail on common permission errors (world writable files, etc.)
@@ -784,7 +793,7 @@ A special value `noarch` used to be available, but has since been removed.
 
 So far, we have listed four types of `depends` variables: `hostmakedepends`,
 `makedepends`, `checkdepends` and `depends`. These different kinds of variables
-are necessary because `dulge-src` supports cross compilation and to aJaguar
+are necessary because `dulge-src` supports cross compilation and to ajaguar
 installing unnecessary packages in the build environment.
 
 During a build process, there are programs that must be _run_ on the host, such
@@ -814,7 +823,7 @@ should be listed in `checkdepends` and will be installed as if they were part of
 <a id="deps_runtime"></a>
 Lastly, a package may require certain dependencies at runtime, without which it
 is unusable. These dependencies, when they aren't detected automatically by
-dulge, should be listed in `depends`.
+DULGE, should be listed in `depends`.
 
 Libraries linked by ELF objects are detected automatically by `dulge-src`, hence they
 must not be specified in templates via `depends`. This variable should list:
@@ -962,7 +971,7 @@ patches, `foo.patch.args` can be created containing those args.
 
 The `build_style` variable specifies the build method to build and install a
 package. It expects the name of any available script in the
-`Jaguar-Linux-packages/common/build-style` directory. Please note that required packages
+`jaguar-packages/common/build-style` directory. Please note that required packages
 to execute a `build_style` script must be defined via `$hostmakedepends`.
 
 The current list of available `build_style` scripts is the following:
@@ -1048,13 +1057,13 @@ via `make_install_target`.
 via `configure_args`, the meson command can be overridden by `meson_cmd` and the location of
 the out of source build by `meson_builddir`
 
-- `Jaguar-cross` For cross-toolchain packages used to build Jaguar systems. There are no
+- `jaguar-cross` For cross-toolchain packages used to build Jaguar systems. There are no
 mandatory variables (target triplet is inferred), but you can specify some optional
 ones - `cross_gcc_skip_go` can be specified to skip `gccgo`, individual subproject
 configure arguments can be specified via `cross_*_configure_args` where `*` is `binutils`,
-`gcc_bootstrap` (early gcc), `gcc` (final gcc), `glibc`, `configure_args` is
+`gcc_bootstrap` (early gcc), `gcc` (final gcc), `glibc` (or `musl`), `configure_args` is
 additionally passed to both early and final `gcc`. You can also specify custom `CFLAGS`
-and `LDFLAGS` for the libc as `cross_(glibc)_(cflags|ldflags)`.
+and `LDFLAGS` for the libc as `cross_(glibc|musl)_(cflags|ldflags)`.
 
 - `zig-build` For packages using [Zig](https://ziglang.org)'s build
 system. Additional arguments may be passed to the `zig build` invocation using
@@ -1094,14 +1103,14 @@ additional paths to be searched when linking target binaries to be introspected.
 `qemu-<target_arch>-static` when running the target binary. You can for example specify
 `GIR_EXTRA_OPTIONS="-strace"` to see a trace of what happens when running that binary.
 
-- `meson` creates a cross file, `${DULGE_WRAPPERDIR}/meson/DULGE_meson.cross`, which configures
+- `meson` creates a cross file, `${DULGE_WRAPPERDIR}/meson/dulge_meson.cross`, which configures
 meson for cross builds. This is particularly useful for building packages that wrap meson
 invocations (e.g., `python3-pep517` packages that use a meson backend) and is added by default
 for packages that use the `meson` build style.
 
 - `numpy` configures the environment for cross-compilation of python packages that provide
 compiled extensions linking to NumPy C libraries. If the `meson` build helper is also
-configured, a secondary cross file, `${DULGE_WRAPPERDIR}/meson/DULGE_numpy.cross`, will be
+configured, a secondary cross file, `${DULGE_WRAPPERDIR}/meson/dulge_numpy.cross`, will be
 written to inform meson where common NumPy components may be found.
 
 - `python3` configures the cross-build environment to use Python libraries, header files, and
@@ -1197,7 +1206,7 @@ if it is defined, otherwise `wrksrc`.
 ### Build options
 
 Some packages might be built with different build options to enable/disable
-additional features; The dulge source packages collection allows you to do this with some simple tweaks
+additional features; The DULGE source packages collection allows you to do this with some simple tweaks
 to the `template` file.
 
 The following variables may be set to allow package build options:
@@ -1478,7 +1487,7 @@ version=1.0
 revision=1
 build_style=gnu-configure
 short_desc="A short description max 72 chars"
-maintainer="TigerClips1 <spongebob1966@proton.me>"
+maintainer="name <email>"
 license="GPL-3.0-or-later"
 homepage="http://www.foo.org"
 distfiles="http://www.foo.org/foo-${version}.tar.gz"
@@ -1747,7 +1756,7 @@ When removing the package template:
 - If the package provides shlibs make sure to remove them from
 common/shlibs.
 - Some packages use patches and files from other packages using symlinks,
-generally those packages are the same but have been split as to aJaguar
+generally those packages are the same but have been split as to ajaguar
 cyclic dependencies. Make sure that the package you're removing is not
 the source of those patches/files.
 - Remove package template.
@@ -1757,10 +1766,10 @@ This will uninstall package from systems where it is installed.
 - Remove the package from the repository index
 or contact a team member that can do so.
 
-<a id="DULGE_triggers"></a>
-### dulge Triggers
+<a id="dulge_triggers"></a>
+### DULGE Triggers
 
-dulge triggers are a collection of snippets of code, provided by the `dulge-triggers`
+DULGE triggers are a collection of snippets of code, provided by the `dulge-triggers`
 package, that are added to the INSTALL/REMOVE scripts of packages either manually
 by setting the `triggers` variable in the template, or automatically, when specific
 conditions are met.
@@ -1815,6 +1824,7 @@ which should contain lines defining binfmts to register:
 ...
 ```
 
+See [`update-binfmts(8)`](https://man.jaguarlinux.org/man8/update-binfmts.8) for more details.
 
 <a id="triggers_dkms"></a>
 #### dkms
@@ -2167,12 +2177,12 @@ To include this trigger use the `sgml_entries` variable or/and the `xml_entries`
 as the trigger won't do anything unless either of them are defined.
 
 <a id="documentation"></a>
-### Jaguar specific documentation
+###  specific documentation
 
 When you want document details of package's configuration and usage specific to Jaguar Linux,
 not covered by upstream documentation, put notes into
-`srcpkgs/<pkgname>/files/README.Jaguarlinux` and install with
-`vdoc "${FILESDIR}/README.Jaguarlinux"`.
+`srcpkgs/<pkgname>/files/README.jaguarlinux` and install with
+`vdoc "${FILESDIR}/README.jaguarlinux"`.
 
 <a id="notes"></a>
 ### Notes
@@ -2196,9 +2206,9 @@ otherwise the `debug` packages won't have debugging symbols.
 <a id="contributing"></a>
 ### Contributing via git
 
-To get started, [fork](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/working-with-forks/fork-a-repo) the Jaguar-linux `Jaguar-Linux-packages` git repository on GitHub and clone it:
+To get started, [fork](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/working-with-forks/fork-a-repo) the jaguar-linux `jaguar-packages` git repository on GitHub and clone it:
 
-    $ git clone git@github.com:<user>/Jaguar-Linux-packages.git
+    $ git clone git@github.com:<user>/jaguar-packages.git
 
 See [CONTRIBUTING.md](./CONTRIBUTING.md) for information on how to format your
 commits and other tips for contributing.
@@ -2209,7 +2219,7 @@ a github pull request.
 To keep your forked repository always up to date, setup the `upstream` remote
 to pull in new changes:
 
-    $ git remote add upstream https://github.com/JaguarLinux/Jaguar-Linux-packages.git
+    $ git remote add upstream https://github.com/jaguar-linux/jaguar-packages.git
     $ git pull --rebase upstream master
 
 <a id="help"></a>

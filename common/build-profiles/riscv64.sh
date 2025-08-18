@@ -1,0 +1,7 @@
+DULGE_TARGET_CFLAGS="-march=rv64imafdc"
+DULGE_TARGET_CXXFLAGS="$DULGE_TARGET_CFLAGS"
+DULGE_TARGET_FFLAGS="$DULGE_TARGET_CFLAGS"
+DULGE_TRIPLET="riscv64-unknown-linux-gnu"
+DULGE_RUST_TARGET="riscv64gc-unknown-linux-gnu"
+DULGE_ZIG_TARGET="riscv64-linux-gnu"
+DULGE_ZIG_CPU="baseline"

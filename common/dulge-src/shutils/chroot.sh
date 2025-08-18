@@ -30,7 +30,7 @@ install_base_chroot() {
 }
 
 reconfigure_base_chroot() {
-    local statefile="$DULGE_MASTERDIR/.DULGE_chroot_configured"
+    local statefile="$DULGE_MASTERDIR/.dulge_chroot_configured"
     local pkgs="glibc-locales ca-certificates"
     [ -z "$IN_CHROOT" -o -e $statefile ] && return 0
     # Reconfigure ca-certificates.
@@ -84,7 +84,7 @@ DULGE_SRC_VERSION="$DULGE_SRC_VERSION"
 
 . /etc/dulge/dulge-src.conf
 
-PATH=/Jaguar-Linux-packages:/usr/bin
+PATH=/jaguar-packages:/usr/bin
 
 exec env -i -- SHELL=/bin/sh PATH="\$PATH" DISTCC_HOSTS="\$DULGE_DISTCC_HOSTS" DISTCC_DIR="/host/distcc" \
     ${DULGE_ARCH+DULGE_ARCH=$DULGE_ARCH} ${DULGE_CHECK_PKGS+DULGE_CHECK_PKGS=$DULGE_CHECK_PKGS} \
@@ -100,7 +100,7 @@ _EOF
 chroot_prepare() {
     local f=
 
-    if [ -f $DULGE_MASTERDIR/.DULGE_chroot_init ]; then
+    if [ -f $DULGE_MASTERDIR/.dulge_chroot_init ]; then
         return 0
     elif [ ! -f $DULGE_MASTERDIR/bin/bash ]; then
         msg_error "Bootstrap not installed in $DULGE_MASTERDIR, can't continue.\n"
@@ -133,8 +133,8 @@ chroot_prepare() {
             >> ${DULGE_MASTERDIR}/etc/default/libc-locales
     fi
 
-    touch -f $DULGE_MASTERDIR/.DULGE_chroot_init
-    [ -n "$1" ] && echo $1 >> $DULGE_MASTERDIR/.DULGE_chroot_init
+    touch -f $DULGE_MASTERDIR/.dulge_chroot_init
+    [ -n "$1" ] && echo $1 >> $DULGE_MASTERDIR/.dulge_chroot_init
 
     return 0
 }
@@ -147,8 +147,8 @@ chroot_handler() {
     if [ -n "$IN_CHROOT" -o -z "$CHROOT_READY" ]; then
         return 0
     fi
-    if [ ! -d $DULGE_MASTERDIR/Jaguar-Linux-packages ]; then
-        mkdir -p $DULGE_MASTERDIR/Jaguar-Linux-packages
+    if [ ! -d $DULGE_MASTERDIR/jaguar-packages ]; then
+        mkdir -p $DULGE_MASTERDIR/jaguar-packages
     fi
 
     case "$action" in
@@ -183,7 +183,7 @@ chroot_handler() {
             ${DULGE_ALT_REPOSITORY:+DULGE_ALT_REPOSITORY=$DULGE_ALT_REPOSITORY} \
             $DULGE_COMMONDIR/chroot-style/${DULGE_CHROOT_CMD:=uunshare}.sh \
             $DULGE_MASTERDIR $DULGE_DISTDIR "$DULGE_HOSTDIR" "$DULGE_CHROOT_CMD_ARGS" \
-            /Jaguar-Linux-packages/dulge-src $DULGE_OPTIONS $action $pkg
+            /jaguar-packages/dulge-src $DULGE_OPTIONS $action $pkg
         rv=$?
     fi
 

@@ -1,0 +1,12 @@
+# Cross build profile for ppc64 big-endian musl.
+
+DULGE_TARGET_MACHINE="ppc64-musl"
+DULGE_TARGET_QEMU_MACHINE="ppc64"
+DULGE_CROSS_TRIPLET="powerpc64-linux-musl"
+DULGE_CROSS_CFLAGS="-mcpu=970 -mtune=power9"
+DULGE_CROSS_CXXFLAGS="$DULGE_CROSS_CFLAGS"
+DULGE_CROSS_FFLAGS="$DULGE_CROSS_CFLAGS"
+DULGE_CROSS_RUSTFLAGS="--sysroot=${DULGE_CROSS_BASE}/usr"
+DULGE_CROSS_RUST_TARGET="powerpc64-unknown-linux-musl"
+DULGE_CROSS_ZIG_TARGET="powerpc64-linux-musl"
+DULGE_CROSS_ZIG_CPU="970"

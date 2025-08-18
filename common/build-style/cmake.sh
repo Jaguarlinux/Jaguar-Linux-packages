@@ -24,6 +24,14 @@ _EOF
 		case "$DULGE_TARGET_MACHINE" in
 			x86_64*) _CMAKE_SYSTEM_PROCESSOR=x86_64 ;;
 			i686*) _CMAKE_SYSTEM_PROCESSOR=x86 ;;
+			aarch64*) _CMAKE_SYSTEM_PROCESSOR=aarch64 ;;
+			arm*) _CMAKE_SYSTEM_PROCESSOR=arm ;;
+			mips*) _CMAKE_SYSTEM_PROCESSOR=mips ;;
+			ppc64le*) _CMAKE_SYSTEM_PROCESSOR=ppc64le ;;
+			ppc64*) _CMAKE_SYSTEM_PROCESSOR=ppc64 ;;
+			ppcle*) _CMAKE_SYSTEM_PROCESSOR=ppcle ;;
+			ppc*) _CMAKE_SYSTEM_PROCESSOR=ppc ;;
+			riscv64*) _CMAKE_SYSTEM_PROCESSOR=riscv64 ;;
 			*) _CMAKE_SYSTEM_PROCESSOR=generic ;;
 		esac
 		cat > cross_${DULGE_CROSS_TRIPLET}.cmake <<_EOF

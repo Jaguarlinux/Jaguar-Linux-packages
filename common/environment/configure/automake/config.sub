@@ -1334,7 +1334,7 @@ case $os in
 	unixware*)
 		os=sysv4.2uw
 		;;
-	# es1800 is here to avoid being matched by es* (a different OS)
+	# es1800 is here to ajaguar being matched by es* (a different OS)
 	es1800*)
 		os=ose
 		;;

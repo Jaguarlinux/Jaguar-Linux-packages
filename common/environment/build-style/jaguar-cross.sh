@@ -1,7 +1,7 @@
 # Snapshot tarballs get removed after over a year, we can archive the ones we need in distfiles.
 case "$DULGE_DISTFILES_FALLBACK" in
-	*"mirror.ps4jaguarlinux.site/pub/"*) ;;
-	*) DULGE_DISTFILES_FALLBACK+=" mirror.ps4jaguarlinux.site/pub/" ;;
+	*"repo-default.jaguarlinux.org/distfiles"*) ;;
+	*) DULGE_DISTFILES_FALLBACK+=" https://repo-default.jaguarlinux.org/distfiles" ;;
 esac
 
 lib32disabled=yes

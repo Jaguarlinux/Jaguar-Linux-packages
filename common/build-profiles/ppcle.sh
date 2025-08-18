@@ -1,0 +1,7 @@
+DULGE_TARGET_CFLAGS="-mcpu=power8 -mtune=power9"
+DULGE_TARGET_CXXFLAGS="$DULGE_TARGET_CFLAGS"
+DULGE_TARGET_FFLAGS="$DULGE_TARGET_CFLAGS"
+DULGE_TRIPLET="powerpcle-linux-gnu"
+DULGE_RUST_TARGET="powerpcle-unknown-linux-gnu"
+DULGE_ZIG_TARGET="powerpcle-linux-gnu"
+DULGE_ZIG_CPU="pwr8"

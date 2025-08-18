@@ -1,0 +1,7 @@
+DULGE_TARGET_CFLAGS="-march=armv6 -mfpu=vfp -mfloat-abi=hard"
+DULGE_TARGET_CXXFLAGS="$DULGE_TARGET_CFLAGS"
+DULGE_TARGET_FFLAGS="$DULGE_TARGET_CFLAGS"
+DULGE_TRIPLET="armv6l-unknown-linux-gnueabihf"
+DULGE_RUST_TARGET="arm-unknown-linux-gnueabihf"
+DULGE_ZIG_TARGET="arm-linux-gnueabihf"
+DULGE_ZIG_CPU="generic+v6"

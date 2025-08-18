@@ -24,6 +24,11 @@ do_configure() {
 		case $DULGE_TARGET_MACHINE in
 			i686*) _qt_arch=i386;;
 			x86_64*) _qt_arch=x86_64;;
+			aarch64*) _qt_arch=arm64;;
+			arm*) _qt_arch=arm;;
+			mips*) _qt_arch=mips;;
+			ppc64*) _qt_arch=power64;;
+			ppc*) _qt_arch=power;;
 		esac
 		mkdir -p "${builddir}/.target-spec/linux-g++"
 		cat > "${builddir}/.target-spec/linux-g++/qmake.conf" <<_EOF

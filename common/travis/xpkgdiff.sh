@@ -7,7 +7,7 @@ set -e
 export DULGE_TARGET_ARCH="$2"
 export DIFF='diff --unified=0 --report-identical-files --suppress-common-lines
  --color=always --label REPO --label BUILT'
-ARGS="-a $2 -R https://repo-ci.voidlinux.org/current"
+ARGS="-a $2 -R https://repo-ci.jaguarlinux.org/current"
 
 while read -r pkg; do
 	for subpkg in $(xsubpkg $pkg); do

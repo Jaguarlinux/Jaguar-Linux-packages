@@ -5,20 +5,37 @@
 [ -z "$CROSS_BUILD" ] && return 0
 
 # The cross file should only be written once, unless forced
-[ -e "${DULGE_WRAPPERDIR}/meson/dulge_meson.cross" ] && [ -z "$DULGEBUILD_FORCEMODE" ] && return 0
+[ -e "${DULGE_WRAPPERDIR}/meson/dulge_meson.cross" ] && [ -z "$DULGE_BUILD_FORCEMODE" ] && return 0
 
-mkdir -p "${XDULGE_WRAPPERDIR}/meson"
+mkdir -p "${DULGE_WRAPPERDIR}/meson"
 
 _MESON_TARGET_ENDIAN=little
 # drop the -musl suffix to the target cpu, meson doesn't recognize it
-_MESON_TARGET_CPU=${XDULGE_TARGET_MACHINE/-musl/}
-case "$XDULGE_TARGET_MACHINE" in
+_MESON_TARGET_CPU=${DULGE_TARGET_MACHINE/-musl/}
+case "$DULGE_TARGET_MACHINE" in
 	mips|mips-musl|mipshf-musl)
 		_MESON_TARGET_ENDIAN=big
 		_MESON_CPU_FAMILY=mips
 		;;
+	armv*)
+		_MESON_CPU_FAMILY=arm
+		;;
 	i686*)
 		_MESON_CPU_FAMILY=x86
+		;;
+	ppc64le*)
+		_MESON_CPU_FAMILY=ppc64
+		;;
+	ppc64*)
+		_MESON_TARGET_ENDIAN=big
+		_MESON_CPU_FAMILY=ppc64
+		;;
+	ppcle*)
+		_MESON_CPU_FAMILY=ppc
+		;;
+	ppc*)
+		_MESON_TARGET_ENDIAN=big
+		_MESON_CPU_FAMILY=ppc
 		;;
 	*)
 		# if we reached here that means that the cpu and cpu_family

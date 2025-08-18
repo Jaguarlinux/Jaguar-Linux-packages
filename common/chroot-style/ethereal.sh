@@ -7,7 +7,7 @@
 # containers.
 #
 # 2 extra steps required when using this chroot-style:
-# 1. Symlink / to masterdir inside the Jaguar-Linux-packages repo
+# 1. Symlink / to masterdir inside the jaguar-packages repo
 # 2. write the arch of the host system, as dictated by dulge-uhelper arch
 # into /.dulge_chroot_init
 #
@@ -18,14 +18,14 @@
 # Docker example:
 # $ mkdir -p /tmp/image
 # $ dulge-install -y -r /tmp/image \
-#				 -R http://mirror.ps4jaguarlinux.site/pub \
+#				 -R http://mirrors.servercentral.com/jaguarlinux/current \
 #				 -S base-chroot
-# $ tar -pC /tmp/image -c . | sudo docker import - voidlinux/masterdir
+# $ tar -pC /tmp/image -c . | sudo docker import - jaguarlinux/masterdir
 # $ rm -rf /tmp/image
 # # docker run --rm -it \
 #			   -e DULGE_CHROOT_CMD=ethereal \
 #			   -e DULGE_ALLOW_CHROOT_BREAKOUT=yes \
-#			   -v $(pwd):/hostrepo voidlinux/masterdir \
+#			   -v $(pwd):/hostrepo jaguarlinux/masterdir \
 #			   /bin/bash -c 'ln -s / /hostrepo/masterdir && /hostrepo/dulge-src pkg <pkgname>'
 #
 
@@ -77,7 +77,7 @@ if [ ! -L "$MASTERDIR" -o "$(readlink "$MASTERDIR")" != "/" ]; then
 	exit 1
 fi
 
-fake_mount "$DISTDIR" "$MASTERDIR"/Jaguar-Linux-packages
+fake_mount "$DISTDIR" "$MASTERDIR"/jaguar-packages
 
 # Do the same for hostdir
 if [ -n "$HOSTDIR" ]; then
@@ -129,7 +129,7 @@ for m in $mounts; do
 	mkdir -p "$m"
 done
 
-rm -f "$MASTERDIR"/Jaguar-Linux-packages
-mkdir -p "$MASTERDIR"/Jaguar-Linux-packages
+rm -f "$MASTERDIR"/jaguar-packages
+mkdir -p "$MASTERDIR"/jaguar-packages
 
 exit $ret

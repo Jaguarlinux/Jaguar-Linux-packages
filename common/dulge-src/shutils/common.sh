@@ -177,7 +177,7 @@ msg_warn_nochroot() {
 msg_normal() {
     if [ -z "$DULGE_QUIET" ]; then
         # normal messages in bright bold white
-        if [ "$DULGE_BUILD_ENVIRONMENT" = "Jaguar-Linux-packages-ci" ]; then
+        if [ "$DULGE_BUILD_ENVIRONMENT" = "jaguar-packages-ci" ]; then
             # Github CI considers '1m' to be just a font bold
             [ -n "$NOCOLORS" ] || printf "\033[97m\033[1m"
         else
@@ -212,7 +212,7 @@ report_broken() {
 }
 
 msg_normal_append() {
-    if [ "$DULGE_BUILD_ENVIRONMENT" = "Jaguar-Linux-packages-ci" ]; then
+    if [ "$DULGE_BUILD_ENVIRONMENT" = "jaguar-packages-ci" ]; then
         # Github CI considers '1m' to be just a font bold
         [ -n "$NOCOLORS" ] || printf "\033[97m\033[1m"
     else
@@ -331,9 +331,17 @@ get_endian() {
     local arch="${1%-*}"
 
     case "$arch" in
+        aarch64)  echo "le";;
+        armv5tel) echo "le";;
+        armv6l)   echo "le";;
+        armv7l)   echo "le";;
         i686)     echo "le";;
+        mipsel*)  echo "le";;
+        mips*)    echo "be";;
+        ppc*le)   echo "le";;
+        ppc*)     echo "be";;
         x86_64)   echo "le";;
-
+        riscv64)   echo "le";;
     esac
 }
 
@@ -351,14 +359,30 @@ get_wordsize() {
     local arch="${1%-*}"
 
     case "$arch" in
+        aarch64)  echo "64";;
+        armv5tel) echo "32";;
+        armv6l)   echo "32";;
+        armv7l)   echo "32";;
         i686)     echo "32";;
+        mipsel*)  echo "32";;
+        mips*)    echo "32";;
+        ppc64*)   echo "64";;
+        ppc*)     echo "32";;
         x86_64)   echo "64";;
+        riscv64)   echo "64";;
     esac
 }
 
 get_no_atomic8() {
     local arch="${1%-*}"
 
+    case "$arch" in
+        armv5tel) echo "yes";;
+        armv6l)   echo "yes";;
+        mips*)    echo "yes";;
+        ppcle)    echo "yes";;
+        ppc)      echo "yes";;
+    esac
 }
 
 get_subpkgs() {

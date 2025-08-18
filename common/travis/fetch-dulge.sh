@@ -6,8 +6,8 @@ command -v dulge-uhelper >/dev/null && exit
 TAR=tar
 command -v bsdtar >/dev/null && TAR=bsdtar
 ARCH=$(uname -m)-musl
-VERSION=1.0
-URL="https://github.com/Jaguarlinux/dulge/archive/refs/tags/dulge1.0.tar.gz"
+VERSION=0.59_5
+URL="https://repo-ci.jaguarlinux.org/static/dulge-static-static-${VERSION}.${ARCH}.tar.xz"
 FILE=${URL##*/}
 
 mkdir -p /tmp/bin

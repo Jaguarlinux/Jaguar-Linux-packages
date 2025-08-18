@@ -59,14 +59,73 @@ esac
 
 # Read apropiate autoconf cache files for target machine.
 case "$DULGE_TARGET_MACHINE" in
+	armv5te*|armv?l*)
+		. ${_AUTOCONFCACHEDIR}/endian-little
+		. ${_AUTOCONFCACHEDIR}/arm-common
+		. ${_AUTOCONFCACHEDIR}/arm-linux
+		;;
+
+	aarch64*)
+		. ${_AUTOCONFCACHEDIR}/endian-little
+		. ${_AUTOCONFCACHEDIR}/aarch64-linux
+		;;
 
 	i686*)	. ${_AUTOCONFCACHEDIR}/endian-little
 		. ${_AUTOCONFCACHEDIR}/ix86-common
 		;;
 
+	mips)	. ${_AUTOCONFCACHEDIR}/endian-big
+		. ${_AUTOCONFCACHEDIR}/mips-common
+		. ${_AUTOCONFCACHEDIR}/mips-linux
+		;;
+
+	mipshf*)
+		. ${_AUTOCONFCACHEDIR}/endian-big
+		. ${_AUTOCONFCACHEDIR}/mips-common
+		. ${_AUTOCONFCACHEDIR}/mips-linux
+		;;
+
+	mipsel*)
+		. ${_AUTOCONFCACHEDIR}/endian-little
+		. ${_AUTOCONFCACHEDIR}/mips-common
+		. ${_AUTOCONFCACHEDIR}/mips-linux
+		;;
+
 	x86_64*)
 		. ${_AUTOCONFCACHEDIR}/endian-little
 		. ${_AUTOCONFCACHEDIR}/x86_64-linux
+		;;
+
+	ppc64le*)
+		. ${_AUTOCONFCACHEDIR}/endian-little
+		. ${_AUTOCONFCACHEDIR}/powerpc-common
+		. ${_AUTOCONFCACHEDIR}/powerpc-linux
+		. ${_AUTOCONFCACHEDIR}/powerpc64-linux
+		;;
+
+	ppc64*)
+		. ${_AUTOCONFCACHEDIR}/endian-big
+		. ${_AUTOCONFCACHEDIR}/powerpc-common
+		. ${_AUTOCONFCACHEDIR}/powerpc-linux
+		. ${_AUTOCONFCACHEDIR}/powerpc64-linux
+		;;
+
+	ppcle*)
+		. ${_AUTOCONFCACHEDIR}/endian-little
+		. ${_AUTOCONFCACHEDIR}/powerpc-common
+		. ${_AUTOCONFCACHEDIR}/powerpc-linux
+		. ${_AUTOCONFCACHEDIR}/powerpc32-linux
+		;;
+
+	ppc*)
+		. ${_AUTOCONFCACHEDIR}/endian-big
+		. ${_AUTOCONFCACHEDIR}/powerpc-common
+		. ${_AUTOCONFCACHEDIR}/powerpc-linux
+		. ${_AUTOCONFCACHEDIR}/powerpc32-linux
+		;;
+	riscv*)
+		. ${_AUTOCONFCACHEDIR}/endian-little
+		. ${_AUTOCONFCACHEDIR}/riscv64-linux
 		;;
 
 	*) ;;

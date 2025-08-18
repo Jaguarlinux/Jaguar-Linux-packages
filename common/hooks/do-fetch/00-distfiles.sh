@@ -148,8 +148,8 @@ try_mirrors() {
 				continue
 			fi
 		fi
-		if [[ "$mirror" == *sources.voidlinux.* ]]; then
-			# For sources.voidlinux.* append the subdirectory
+		if [[ "$mirror" == *sources.jaguarlinux.* ]]; then
+			# For sources.jaguarlinux.* append the subdirectory
 			mirror="$mirror/$pkgname-$version"
 		fi
 		msg_normal "$pkgver: fetching distfile '$curfile' from mirror '$mirror'...\n"

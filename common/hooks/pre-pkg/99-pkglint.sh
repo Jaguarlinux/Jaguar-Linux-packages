@@ -1,4 +1,4 @@
-# This hook checks for common issues related to void.
+# This hook checks for common issues related to jaguar.
 
 hook() {
 	local error=0 filename= rev= libname= conflictPkg= conflictFile=
@@ -7,7 +7,7 @@ hook() {
 
 	set +E
 
-	# Check for forbidden directories that are symlinks in void.
+	# Check for forbidden directories that are symlinks in jaguar.
 	for f in lib bin sbin lib64 lib32 usr/sbin usr/lib64; do
 		[ -e "${PKGDESTDIR}/${f}" ] || continue
 		if [ "${pkgname}" = "base-files" ]; then

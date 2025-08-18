@@ -1,7 +1,7 @@
 if [ -z "$hostmakedepends" -o "${hostmakedepends##*gcc-go-tools*}" ]; then
 	# gc compiler
 	if [ -z "$archs" ]; then
-		archs="i686* x86_64*"
+		archs="aarch64* armv[567]* i686* x86_64* ppc64le* riscv64*"
 	fi
 	hostmakedepends+=" go"
 	nopie=yes
@@ -9,7 +9,7 @@ else
 	# gccgo compiler
 	if [ -z "$archs" ]; then
 		# we have support for these in our gcc
-		archs="i686* x86_64*"
+		archs="aarch64* armv[567]* i686* x86_64* ppc64* riscv64*"
 	fi
 	if [ "$CROSS_BUILD" ]; then
 		# target compiler to use; otherwise it'll just call gccgo
@@ -18,9 +18,18 @@ else
 fi
 
 case "$DULGE_TARGET_MACHINE" in
+	aarch64*) export GOARCH=arm64;;
+	armv5*) export GOARCH=arm; export GOARM=5;;
+	armv6*) export GOARCH=arm; export GOARM=6;;
+	armv7*) export GOARCH=arm; export GOARM=7;;
 	i686*) export GOARCH=386;;
 	x86_64*) export GOARCH=amd64;;
-
+	ppc64le*) export GOARCH=ppc64le;;
+	ppc64*) export GOARCH=ppc64;;
+	ppc*) export GOARCH=ppc;;
+	mipsel*) export GOARCH=mipsle;;
+	mips*) export GOARCH=mips;;
+	riscv64*) export GOARCH=riscv64;;
 esac
 
 export GOPATH="${wrksrc}/_build-${pkgname}-dulge"

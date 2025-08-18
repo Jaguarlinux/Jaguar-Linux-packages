@@ -18,4 +18,4 @@ if [ -z "$MASTERDIR" -o -z "$DISTDIR" ]; then
 	exit 1
 fi
 
-exec dulge-uunshare $EXTRA_ARGS -b $DISTDIR:/Jaguar-Linux-packages ${HOSTDIR:+-b $HOSTDIR:/host} -- $MASTERDIR $CMD $@
+exec dulge-uunshare $EXTRA_ARGS -b $DISTDIR:/jaguar-packages ${HOSTDIR:+-b $HOSTDIR:/host} -- $MASTERDIR $CMD $@

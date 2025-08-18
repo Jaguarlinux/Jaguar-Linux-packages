@@ -75,7 +75,7 @@ install_pkg_from_repos() {
     [ $# -eq 0 ] && return 0
 
     mkdir -p $DULGE_STATEDIR
-    tmplogf=${DULGE_STATEDIR}/DULGE_${DULGE_TARGET_MACHINE}_bdep_${pkg}.log
+    tmplogf=${DULGE_STATEDIR}/dulge_${DULGE_TARGET_MACHINE}_bdep_${pkg}.log
 
     cmd=$DULGE_INSTALL_CMD
     [[ $cross ]] && cmd=$DULGE_INSTALL_XCMD
@@ -130,7 +130,7 @@ check_installed_pkg() {
 skip_check_step() {
     [ -z "$DULGE_CHECK_PKGS" ] ||
         [ "$DULGE_CROSS_BUILD" ] ||
-        [ "$make_check" = ci-skip  -a "$DULGE_BUILD_ENVIRONMENT" = Jaguar-Linux-packages-ci ] ||
+        [ "$make_check" = ci-skip  -a "$DULGE_BUILD_ENVIRONMENT" = jaguar-packages-ci ] ||
         [ "$make_check" = extended -a "$DULGE_CHECK_PKGS" != full ] ||
         [ "$make_check" = no ]
 }

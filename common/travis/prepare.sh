@@ -5,7 +5,7 @@
 set -e
 
 /bin/echo -e '\x1b[32mUpdating etc/conf...\x1b[0m'
-echo DULGE_BUILD_ENVIRONMENT=Jaguar-Linux-packages-ci >> etc/conf
+echo DULGE_BUILD_ENVIRONMENT=jaguar-packages-ci >> etc/conf
 echo DULGE_ALLOW_RESTRICTED=yes >> etc/conf
 
 /bin/echo -e '\x1b[32mEnabling uchroot chroot-style...\x1b[0m'

@@ -18,6 +18,6 @@ if [ -z "$MASTERDIR" -o -z "$DISTDIR" ]; then
 	exit 1
 fi
 
-exec bwrap --bind "$MASTERDIR" / --ro-bind "$DISTDIR" /Jaguar-Linux-packages \
+exec bwrap --bind "$MASTERDIR" / --ro-bind "$DISTDIR" /jaguar-packages \
 	 --dev /dev --tmpfs /tmp --proc /proc \
 	${HOSTDIR:+--bind "$HOSTDIR" /host} $EXTRA_ARGS "$@"

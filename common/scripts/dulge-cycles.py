@@ -15,7 +15,7 @@ def enum_depends(pkg, dulgedir, cachedir):
 	'''
 	Return a pair (pkg, [dependencies]), where [dependencies] is the list
 	of dependencies for the given package pkg. The argument dulgedir should
-	be a path to a Jaguar-Linux-packages repository. Dependencies will be
+	be a path to a jaguar-packages repository. Dependencies will be
 	determined by invoking
 
 		<dulgedir>/dulge-src show-build-deps <pkg>
@@ -55,7 +55,7 @@ def find_cycles(depmap, dulgedir):
 	For a map depmap: package -> [dependencies], construct a directed graph
 	and identify any cycles therein.
 
-	The argument dulgedir should be a path to the root of a Jaguar-Linux-packages
+	The argument dulgedir should be a path to the root of a jaguar-packages
 	repository. All package names in depmap will be appended to the path
 	<dulgedir>/srcpkgs and reduced with os.path.realpath to coalesce
 	subpackages.
@@ -100,7 +100,7 @@ if __name__ == '__main__':
 	parser.add_argument('-c', '--cachedir', default=None,
 			help='Directory used to cache build dependencies (must exist)')
 	parser.add_argument('-d', '--directory',
-			default=None, help='Path to Jaguar-Linux-packages repo')
+			default=None, help='Path to jaguar-packages repo')
 	parser.add_argument('-Q', dest='check_pkgs', action='store_const',
 			const='yes', help='Use build dependencies for check -Q')
 	parser.add_argument('-K', dest='check_pkgs', action='store_const',
