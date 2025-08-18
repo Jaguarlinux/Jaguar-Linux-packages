@@ -1,7 +1,7 @@
 # Template file for 'dulge-static'
 # NOTE: keep this package synchronized with "srcpkgs/dulge"
 pkgname=dulge-static
-version=0.60.5
+version=0.60.5.1
 revision=1
 # only musl
 archs="*-musl"
@@ -14,7 +14,7 @@ maintainer="TigerClips1 <spongebob1966@proton.me>"
 license="BSD-2-Clause, BSD-3-Clause, ISC"
 homepage="https://github.com/Jaguarlinux/dulge"
 distfiles="https://github.com/Jaguarlinux/dulge/archive/refs/tags/${version}.tar.gz"
-checksum=000f0af1ad5cb803d90c2580ea32c31ede86402894fbd538bff71f8437c09bbf
+checksum=f4c68bb1b827fa8c7f47da503e6ca455baf9ceb79cd2a2016d359c77a45ec603
 
 do_configure() {
 	./configure --prefix=/usr --sysconfdir=/etc --enable-static
