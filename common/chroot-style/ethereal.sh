@@ -18,7 +18,7 @@
 # Docker example:
 # $ mkdir -p /tmp/image
 # $ dulge-install -y -r /tmp/image \
-#				 -R http://mirrors.servercentral.com/jaguarlinux/current \
+#				 -R https://mirror.ps4jaguarlinux.site/current \
 #				 -S base-chroot
 # $ tar -pC /tmp/image -c . | sudo docker import - jaguarlinux/masterdir
 # $ rm -rf /tmp/image

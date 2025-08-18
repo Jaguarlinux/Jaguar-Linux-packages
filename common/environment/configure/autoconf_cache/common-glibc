@@ -15,7 +15,7 @@ ac_cv_func_vsnprintf_c99=${ac_cv_func_vsnprintf_c99=yes}
 glib_cv_compliant_posix_memalign=${glib_cv_compliant_posix_memalign=1}
 glib_cv_long_long_format=${glib_cv_long_long_format=ll}
 # glib-1.x requires this and pkgconfig-native / pkgconfig-nativesdk use
-# that to ajaguar a dependency loop.
+# that to avoid a dependency loop.
 glib_cv___va_copy=${glib_cv___va_copy=yes}
 glib_cv_va_copy=${glib_cv_va_copy=yes}
 glib_cv_have_qsort_r=${glib_cv_have_qsort_r=yes}

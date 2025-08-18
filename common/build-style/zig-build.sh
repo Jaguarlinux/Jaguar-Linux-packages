@@ -3,7 +3,7 @@ do_build() {
 
 	# TODO: This duplication between build-profiles and cross-profiles
 	# is totally unnecessary. It would be nice if there was some way to
-	# ajaguar it.
+	# avoid it.
 	if [ "$CROSS_BUILD" ]; then
 		zig_target="${DULGE_CROSS_ZIG_TARGET}"
 		zig_cpu="${DULGE_CROSS_ZIG_CPU}"
@@ -26,7 +26,7 @@ do_build() {
 	# way to build artifacts for a given prefix and then install those artifacts
 	# to that prefix at some later time. Therefore, we build and install to the zig-out
 	# directory and later copy the artifacts to the destdir in do_install().
-	# We use zig-out to ajaguar path conflicts as it is the default install
+	# We use zig-out to avoid path conflicts as it is the default install
 	# prefix used by the zig build system.
 	DESTDIR="zig-out" zig build \
 		-j"${DULGE_MAKEJOBS}" \

@@ -739,7 +739,7 @@ fi
 if [ "$DULGE_CCACHE" ]; then
     export CCACHEPATH="/usr/lib/ccache/bin"
     export CCACHE_DIR="$DULGE_HOSTDIR/ccache"
-    # Ajaguar not using cached files just due to compiler mtime
+    # Avoid not using cached files just due to compiler mtime
     # changes when e.g. bootstrapping
     export CCACHE_COMPILERCHECK=content CCACHE_COMPRESS=1
     export PATH="$CCACHEPATH:$PATH"

@@ -1,7 +1,7 @@
 # Cycle detector for jaguar-packages
 
 This script enumerates dependencies for packages in a
-[jaguar-packages repository](https://github.com/jaguar-linux/jaguar-packages)
+[jaguar-packages repository](https://github.com/jaguarlinux/jaguar-packages)
 and identifies build-time dependency cycles.
 
 For command syntax, run `dulge-cycles.py -h`. Often, it may be sufficient to run

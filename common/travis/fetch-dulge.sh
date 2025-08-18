@@ -7,7 +7,7 @@ TAR=tar
 command -v bsdtar >/dev/null && TAR=bsdtar
 ARCH=$(uname -m)-musl
 VERSION=0.59_5
-URL="https://repo-ci.jaguarlinux.org/static/dulge-static-static-${VERSION}.${ARCH}.tar.xz"
+URL="https://mirror.ps4jaguarlinux.site/current/dulge-static-static-${VERSION}.${ARCH}.tar.xz"
 FILE=${URL##*/}
 
 mkdir -p /tmp/bin

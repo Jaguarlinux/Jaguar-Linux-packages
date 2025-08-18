@@ -17,7 +17,7 @@
 #   build_wrksrc=${pkgname}-${version}
 #   build_style=slashpackage
 #   short_desc="A collection of tools for managing UNIX services"
-#   maintainer="bougyman <tj@geoforce.com>"
+#   maintainer="TigerClips1 <spongebob1966@proton.me>"
 #   license="Public Domain"
 #   homepage="http://cr.yp.to/daemontools.html"
 #   distfiles="http://cr.yp.to/daemontools/${pkgname}-${version}.tar.gz"

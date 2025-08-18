@@ -7,7 +7,7 @@ arch=${DULGE_ARCH%-musl}
 # if DULGE_ARCH was reseted by `env -i` use original `/usr/bin/uname -m`
 : ${arch:=$uname_m}
 echo "$uname" |
-	sed "s/\(^\| \)$(/usr/bin/uname -n)\($\| \)/\1jaguar\2/" |
+	sed "s/\(^\| \)$(/usr/bin/uname -n)\($\| \)/\1void\2/" |
 	sed "s/$uname_m/$arch/"
 
 exit $rv
