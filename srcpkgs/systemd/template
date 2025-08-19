@@ -19,7 +19,7 @@ configure_args="-Defi=true -Dman=enabled -Dbootloader=enabled
   -Drpmmacrosdir=no -Dsysvinit-path= -Dsysvrcnd-path="
 
 hostmakedepends="pkg-config gperf python3-Jinja2 python3-pyelftools libxslt docbook-xsl"
-makedepends="libcap-devel libmount-devel"
+makedepends="libcap-devel libmount-devel libbpf"
 depends="systemd-boot-efistub>=${version}_${revision} ukify>=${version}_${revision}"
 short_desc="Simple UEFI boot manager from systemd"
 maintainer="TigerClips1 <spongebob1966@proton.me>"
