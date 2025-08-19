@@ -9,15 +9,18 @@ configure_args="-Defi=true -Dman=enabled -Dbootloader=enabled
   -Dsbat-distro-version="${version}_${revision}"
   -Dsbat-distro-url=https://github.com/jagaurlinux/jaguar-packages/issues
  
-  -Ddefault-dnssec=no -Dfirstboot=true -Dinstall-tests=false   
-  -Dldconfig=false -Dman=auto -Dsysusers=false        
-  -Drpmmacrosdir=no -Dhomed=disabled -Duserdb=false          
-  -Dmode=release -Dpam=enabled -Dpamconfdir=/etc/pam.d -D dev-kvm-mode=0660     
-  -Dnobody-group=nogroup -Dsysupdate=disabled -Ddocdir=/usr/share/doc/systemd-256.6"
+  -Dvcs-tag=false -Dmode=release -Dapparmor=disabled -Dpam=enabled
+  -Dbootloader=enabled -Dxenctrl=disabled -Dbpf-framework=enabled
+  -Dima=false -Dinstall-tests=true -Dlibidn2=enabled
+  -Dlz4=enabled -Dman=enabled -Dselinux=disabled
+  -Dsshdprivsepdir=/usr/share/empty.sshd -Ddbuspolicydir=/usr/share/dbus-1/system.d -Ddefault-dnssec=no
+  -Ddefault-kill-user-processes=false -Ddefault-locale='C.UTF-8' -Dlocalegen-path=/usr/bin/locale-gen
+  -Ddns-over-tls=openssl -Dfallback-hostname='jaguarlinux' -Dnologin-path=/usr/bin/nologin
+  -Drpmmacrosdir=no -Dsysvinit-path= -Dsysvrcnd-path="
 
 hostmakedepends="pkg-config gperf python3-Jinja2 python3-pyelftools libxslt docbook-xsl"
-makedepends="libcap-devel libmount-devel pam-devel libbpf-devel"
-depends="systemd-boot-efistub>=${version}_${revision} ukify>=${version}_${revision} pam libbpf"
+makedepends="libcap-devel libmount-devel pam-devel libbpf-devel cryptsetup-devel"
+depends="systemd-boot-efistub>=${version}_${revision} ukify>=${version}_${revision} pam libbpf cryptsetup"
 short_desc="Simple UEFI boot manager from systemd"
 maintainer="TigerClips1 <spongebob1966@proton.me>"
 license="LGPL-2.1-or-later"
@@ -124,8 +127,8 @@ do_install() {
   vinstall   ${PKGDESTDIR}/var/log/journal
 
   # overwrite the systemd-user PAM configuration with our own
-  vinstall  systemd-user.pam  ${PKGDESTDIR}/usr/lib/pam.d/systemd-user
-
+  vinstall  systemd-session  ${PKGDESTDIR}/usr/lib/pam.d/
+  vinstall ${FILESDIR}/system-user  ${PKGDESTDIR}/usr/lib/pam.d/
   # create a directory for cryptsetup keys
   vinstall  ${PKGDESTDIR}/etc/cryptsetup-keys.d
 
