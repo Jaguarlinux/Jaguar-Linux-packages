@@ -156,13 +156,13 @@ systemd-efistub_package() {
 
 gummiboot_package() {
 	short_desc="Simple UEFI Boot Manager (transitional dummy package)"
-	depends="systemd-boot"
+	depends="systemd"
 	metapackage=yes
 }
 
 gummiboot-efistub_package() {
 	short_desc="Linux UEFI stub from the gummiboot project (transitional dummy package)"
-	depends="systemd-boot-efistub"
+	depends="systemd-efistub"
 	metapackage=yes
 }
 
@@ -180,7 +180,7 @@ systemd-libs_package() {
 
 systemd-sysvcompat_package() {
   short_desc='sysvinit compat for systemd'
-  depends=("systemd=${version}")
+  depends=("systemd")
   pkg_install() {
     vinstall ${PKGDESTDIR}/usr/share/man/man8 \
       build/man/{halt,poweroff,reboot,shutdown}.8
@@ -195,7 +195,7 @@ systemd-sysvcompat_package() {
 
 systemd-resolvconf_package() {
   short_desc='systemd resolvconf replacement (for use with systemd-resolved)'
-  depends=("systemd=${version}")
+  depends=("systemd")
   pkg_install() {
     vinstall ${PKGDESTDIR}/usr/bin
     ln -s resolvectl  ${PKGDESTDIR}/usr/bin/resolvconf
@@ -207,7 +207,7 @@ systemd-resolvconf_package() {
 
 systemd-tests_package() {
   short_desc='systemd tests'
-  depends=("systemd=${version}")
+  depends=("systemd")
   pkg_install() {
   	vinstall  ${PKGDESTDIR}/usr/lib/systemd
   	vmove systemd-tests/tests  ${PKGDESTDIR}/usr/lib/systemd/tests
