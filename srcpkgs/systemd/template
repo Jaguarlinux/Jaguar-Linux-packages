@@ -8,15 +8,12 @@ configure_args="-Defi=true -Dman=enabled -Dbootloader=enabled
   -Dsbat-distro=jaguar -Dsbat-distro-summary=Jaguar -Dsbat-distro-pkgname=${pkgname}
   -Dsbat-distro-version="${version}_${revision}"
   -Dsbat-distro-url=https://github.com/jagaurlinux/jaguar-packages/issues
-
-  -Dvcs-tag=false
-  -Dmode=release -Dapparmor=disabled -Dbootloader=enabled -Dxenctrl=disabled
-  -Dbpf-framework=enabled -Dima=false -Dinstall-tests=true -Dlibidn2=enabled
-  -Dlz4=enabled -Dman=enabled -Dselinux=disabled -Dsshdprivsepdir=/usr/share/empty.sshd
-  -Ddbuspolicydir=/usr/share/dbus-1/system.d -Ddefault-dnssec=no -Ddefault-kill-user-processes=false
-  -Ddefault-locale='C.UTF-8' -Dlocalegen-path=/usr/bin/locale-gen
-  -Ddns-over-tls=openssl -Dfallback-hostname='archlinux' -Dnologin-path=/usr/bin/nologin
-  -Drpmmacrosdir=no -Dsysvinit-path= -Dsysvrcnd-path="
+ 
+  -Ddefault-dnssec=no -Dfirstboot=true -Dinstall-tests=false   
+  -Dldconfig=false -Dman=auto -Dsysusers=false        
+  -Drpmmacrosdir=no -Dhomed=disabled -Duserdb=false          
+  -Dmode=release -Dpam=enabled -Dpamconfdir=/etc/pam.d -D dev-kvm-mode=0660     
+  -Dnobody-group=nogroup -Dsysupdate=disabled -Ddocdir=/usr/share/doc/systemd-256.6"
 
 hostmakedepends="pkg-config gperf python3-Jinja2 python3-pyelftools libxslt docbook-xsl libbpf"
 makedepends="libcap-devel libmount-devel libbpf"
