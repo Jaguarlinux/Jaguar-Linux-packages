@@ -1,4 +1,4 @@
-# Template file for 'systemd-boot'
+# Template file for 'systemd'
 pkgname=systemd
 version=256.6
 revision=2
