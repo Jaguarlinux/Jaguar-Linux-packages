@@ -18,7 +18,7 @@ configure_args="-Defi=true -Dman=enabled -Dbootloader=enabled
   -Ddns-over-tls=openssl -Dfallback-hostname='archlinux' -Dnologin-path=/usr/bin/nologin
   -Drpmmacrosdir=no -Dsysvinit-path= -Dsysvrcnd-path="
 
-hostmakedepends="pkg-config gperf python3-Jinja2 python3-pyelftools libxslt docbook-xsl"
+hostmakedepends="pkg-config gperf python3-Jinja2 python3-pyelftools libxslt docbook-xsl libbpf"
 makedepends="libcap-devel libmount-devel libbpf"
 depends="systemd-boot-efistub>=${version}_${revision} ukify>=${version}_${revision}"
 short_desc="Simple UEFI boot manager from systemd"
