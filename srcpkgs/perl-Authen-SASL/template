@@ -1,6 +1,6 @@
 # Template file for 'perl-Authen-SASL'
 pkgname=perl-Authen-SASL
-version=2.1800
+version=2.1900
 revision=1
 build_style=perl-module
 hostmakedepends="perl"
@@ -11,5 +11,5 @@ maintainer="TigerClips1 <spongebob1966@proton.me>"
 license="Artistic-1.0-Perl, GPL-1.0-or-later"
 homepage="https://metacpan.org/release/Authen-SASL"
 changelog="https://fastapi.metacpan.org/source/EHUELS/Authen-SASL-${version}/Changes"
-distfiles="${CPAN_SITE}/Authen/${pkgname/perl-/}-${version}.tar.gz"
+distfiles="https://cpan.metacpan.org/authors/id/E/EH/EHUELS/Authen-SASL-2.1900.tar.gz"
 checksum=0b03686bddbbf7d5c6548e468d079a4051c9b73851df740ae28cfd2db234e922
