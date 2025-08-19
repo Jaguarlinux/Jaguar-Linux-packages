@@ -16,7 +16,7 @@ configure_args="-Defi=true -Dman=enabled -Dbootloader=enabled
   -Dnobody-group=nogroup -Dsysupdate=disabled -Ddocdir=/usr/share/doc/systemd-256.6"
 
 hostmakedepends="pkg-config gperf python3-Jinja2 python3-pyelftools libxslt docbook-xsl"
-makedepends="libcap-devel libmount-devel  "
+makedepends="libcap-devel libmount-devel pam-devel libbpf-devel"
 depends="systemd-boot-efistub>=${version}_${revision} ukify>=${version}_${revision} pam libbpf"
 short_desc="Simple UEFI boot manager from systemd"
 maintainer="TigerClips1 <spongebob1966@proton.me>"
