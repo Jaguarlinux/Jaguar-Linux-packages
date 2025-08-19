@@ -15,8 +15,8 @@ configure_args="-Defi=true -Dman=enabled -Dbootloader=enabled
   -Dmode=release -Dpam=enabled -Dpamconfdir=/etc/pam.d -D dev-kvm-mode=0660     
   -Dnobody-group=nogroup -Dsysupdate=disabled -Ddocdir=/usr/share/doc/systemd-256.6"
 
-hostmakedepends="pkg-config gperf python3-Jinja2 python3-pyelftools libxslt docbook-xsl libbpf"
-makedepends="libcap-devel libmount-devel libbpf"
+hostmakedepends="pkg-config gperf python3-Jinja2 python3-pyelftools libxslt docbook-xsl libbpf pam"
+makedepends="libcap-devel libmount-devel libbpf pam"
 depends="systemd-boot-efistub>=${version}_${revision} ukify>=${version}_${revision}"
 short_desc="Simple UEFI boot manager from systemd"
 maintainer="TigerClips1 <spongebob1966@proton.me>"
