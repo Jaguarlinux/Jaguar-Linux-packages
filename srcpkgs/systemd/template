@@ -1,0 +1,215 @@
+# Template file for 'systemd-boot'
+pkgname=systemd
+version=256.6
+revision=2
+build_style=meson
+conf_files="/etc/default/systemd"
+configure_args="-Defi=true -Dman=enabled -Dbootloader=enabled
+  -Dsbat-distro=jaguar -Dsbat-distro-summary=Jaguar -Dsbat-distro-pkgname=${pkgname}
+  -Dsbat-distro-version="${version}_${revision}"
+  -Dsbat-distro-url=https://github.com/jagaurlinux/jaguar-packages/issues
+
+  -Dvcs-tag=false
+  -Dmode=release -Dapparmor=disabled -Dbootloader=enabled -Dxenctrl=disabled
+  -Dbpf-framework=enabled -Dima=false -Dinstall-tests=true -Dlibidn2=enabled
+  -Dlz4=enabled -Dman=enabled -Dselinux=disabled -Dsshdprivsepdir=/usr/share/empty.sshd
+  -Ddbuspolicydir=/usr/share/dbus-1/system.d -Ddefault-dnssec=no -Ddefault-kill-user-processes=false
+  -Ddefault-locale='C.UTF-8' -Dlocalegen-path=/usr/bin/locale-gen
+  -Ddns-over-tls=openssl -Dfallback-hostname='archlinux' -Dnologin-path=/usr/bin/nologin
+  -Drpmmacrosdir=no -Dsysvinit-path= -Dsysvrcnd-path="
+
+hostmakedepends="pkg-config gperf python3-Jinja2 python3-pyelftools libxslt docbook-xsl"
+makedepends="libcap-devel libmount-devel"
+depends="systemd-boot-efistub>=${version}_${revision} ukify>=${version}_${revision}"
+short_desc="Simple UEFI boot manager from systemd"
+maintainer="TigerClips1 <spongebob1966@proton.me>"
+license="LGPL-2.1-or-later"
+homepage="https://www.freedesktop.org/wiki/Software/systemd/systemd-boot/"
+distfiles="https://github.com/systemd/systemd/archive/refs/tags/v${version}.tar.gz"
+checksum=c085f162dec001407dd32f00abbf20b7e6ed7043dcfaf8ed954787d86707f409
+make_check=no  # tests a bunch of stuff we aren't using
+
+if [ "${DULGE_TARGET_LIBC}" = glibc ]; then
+	makedepends+=" libxcrypt-devel"
+else
+	# see src/basic/linux/if_ether.h
+	export CFLAGS="-D__UAPI_DEF_ETHHDR=0 -Wno-error=incompatible-pointer-types"
+fi
+
+case "${DULGE_TARGET_MACHINE}" in
+	x86_64*)  _efi_arch="x64"     ;;
+	i686*)    _efi_arch="ia32"    ;;
+	aarch64*) _efi_arch="aa64"    ;;
+	arm*)     _efi_arch="arm"     ;;
+	riscv64*) _efi_arch="riscv64" ;;
+	*) broken="unknown efi architecture" ;;
+esac
+
+_bins=(ukify bootctl)
+_mans=(man/ukify.1 man/systemd-stub.7
+ man/sd-boot.7 man/systemd-boot.7 man/bootctl.1)
+_efis=("src/boot/efi/linux${_efi_arch}.efi.stub"
+ "src/boot/efi/systemd-boot${_efi_arch}.efi")
+_libexecs=(systemd-bless-boot)
+make_build_target="${_bins[*]} ${_mans[*]} ${_efis[*]} ${_libexecs[*]}"
+
+post_patch() {
+	if [ "${DULGE_TARGET_LIBC}" = musl ]; then
+		for x in ${FILESDIR}/patches/musl/*.patch; do
+			msg_normal "Applying patch $x\n"
+			patch -sNp1 -i ${x}
+		done
+	fi
+}
+
+do_install() {
+	for b in "${_bins[@]}"; do
+		vbin "build/$b"
+	done
+
+	for m in build/man/*.[0-9]; do
+		vman "$m"
+	done
+
+	for e in "${_efis[@]}"; do
+		vinstall "build/$e" 644 usr/lib/systemd/boot/efi
+	done
+
+	for l in "${_libexecs[@]}"; do
+		vinstall "build/$l" 644 usr/lib/systemd
+	done
+
+	vinstall ${FILESDIR}/kernel.d/systemd-boot.post-install 744 \
+		etc/kernel.d/post-install 50-systemd-boot
+	vinstall ${FILESDIR}/kernel.d/systemd-boot.post-remove 744 \
+		etc/kernel.d/post-remove 50-systemd-boot
+	vinstall ${FILESDIR}/kernel.d/systemd-boot.conf 644 \
+		etc/default systemd-boot
+
+  # we'll create this on installation
+  rmdir  ${PKGDESTDIR}/var/log/journal/remote
+
+  # runtime libraries shipped with systemd-libs
+  vinstall systemd-libs/lib/
+  vmove  ${PKGDESTDIR}/usr/lib/lib{nss,systemd,udev}*.so* systemd-libs/lib/
+  vmove  ${PKGDESTDIR}/usr/lib/pkgconfig systemd-libs/lib/pkgconfig
+  vmove  ${PKGDESTDIR}/usr/include systemd-libs/include
+  vmove  ${PKGDESTDIR}/usr/share/man/man3 systemd-libs/man3
+
+  # we move the ukify hook itself, but keep 90-uki-copy.install in place,
+  # because there are other ways to generate UKIs w/o ukify, e.g. w/ mkinitcpio
+  vmove  ${PKGDESTDIR}/usr/lib/kernel/install.d/60-ukify.install systemd-ukify/install.d
+
+  # manpages shipped with systemd-sysvcompat
+  rm  ${PKGDESTDIR}/usr/share/man/man8/{halt,poweroff,reboot,shutdown}.8
+
+  # executable (symlinks) shipped with systemd-sysvcompat
+  rm  ${PKGDESTDIR}/usr/bin/{halt,init,poweroff,reboot,shutdown}
+
+  # files shipped with systemd-resolvconf
+  rm  ${PKGDESTDIR}/usr/{bin/resolvconf,share/man/man1/resolvconf.1}
+
+  # tests shipped with systemd-tests (for upstream)
+  vinstall systemd-tests/
+  vmove  ${PKGDESTDIR}/usr/lib/systemd/tests systemd-tests/
+
+  # avoid a potential conflict with [core]/filesystem
+  rm  ${PKGDESTDIR}/usr/share/factory/etc/{issue,nsswitch.conf}
+  sed -i -e '/^C \/etc\/nsswitch\.conf/d' \
+    -e '/^C \/etc\/issue/d'  ${PKGDESTDIR}/usr/lib/tmpfiles.d/etc.conf
+
+  # ship default policy to leave services disabled
+  echo 'disable *' > ${PKGDESTDIR}/usr/lib/systemd/system-preset/99-default.preset
+
+  # The group 'systemd-journal' is allocated dynamically and may have varying
+  # gid on different systems. Let's install with gid 0 (root), systemd-tmpfiles
+  # will fix the permissions for us. (see /usr/lib/tmpfiles.d/systemd.conf)
+  vinstall   ${PKGDESTDIR}/var/log/journal
+
+  # overwrite the systemd-user PAM configuration with our own
+  vinstall  systemd-user.pam  ${PKGDESTDIR}/usr/lib/pam.d/systemd-user
+
+  # create a directory for cryptsetup keys
+  vinstall  ${PKGDESTDIR}/etc/cryptsetup-keys.d
+
+}
+
+
+ukify_package() {
+	short_desc="Unified Kernel Image creation tool from systemd-boot"
+	depends="python3-pefile"
+	pkg_install() {
+		vmove usr/bin/ukify
+		vmove usr/share/man/man1/ukify.1
+	}
+}
+
+systemd-efistub_package() {
+	short_desc="UEFI stub loader from systemd-boot"
+	pkg_install() {
+		vmove "usr/lib/systemd/boot/efi/linux*.efi.stub"
+		vmove "usr/share/man/man7/linux*.efi.*"
+		vmove usr/share/man/man7/sd-stub.7
+		vmove usr/share/man/man7/systemd-stub.7
+	}
+}
+
+gummiboot_package() {
+	short_desc="Simple UEFI Boot Manager (transitional dummy package)"
+	depends="systemd-boot"
+	metapackage=yes
+}
+
+gummiboot-efistub_package() {
+	short_desc="Linux UEFI stub from the gummiboot project (transitional dummy package)"
+	depends="systemd-boot-efistub"
+	metapackage=yes
+}
+
+systemd-libs_package() {
+  short_desc='systemd client libraries'
+  depends=('glibc' 'gcc-libs' 'libcap' 'libgcrypt' 'lz4' 'xz' 'zstd')
+  pkg_install() {
+    vinstall ${PKGDESTDIR}/usr/share/man
+    vmove systemd-libs/lib  ${PKGDESTDIR}/usr/lib
+    vmove systemd-libs/include  ${PKGDESTDIR}/usr/include
+    vmove systemd-libs/man3  ${PKGDESTDIR}/usr/share/man/man3
+  }
+
+}
+
+systemd-sysvcompat_package() {
+  short_desc='sysvinit compat for systemd'
+  depends=("systemd=${version}")
+  pkg_install() {
+    vinstall ${PKGDESTDIR}/usr/share/man/man8 \
+      build/man/{halt,poweroff,reboot,shutdown}.8
+
+    vinstall  ${PKGDESTDIR}/usr/bin
+    ln -s ../lib/systemd/systemd  ${PKGDESTDIR}/usr/bin/init
+    for tool in halt poweroff reboot shutdown; do
+      ln -s systemctl  ${PKGDESTDIR}/usr/bin/$tool
+    done
+  }
+}
+
+systemd-resolvconf_package() {
+  short_desc='systemd resolvconf replacement (for use with systemd-resolved)'
+  depends=("systemd=${version}")
+  pkg_install() {
+    vinstall ${PKGDESTDIR}/usr/bin
+    ln -s resolvectl  ${PKGDESTDIR}/usr/bin/resolvconf
+
+    vinstall  ${PKGDESTDIR}/usr/share/man/man1
+    ln -s resolvectl.1.gz  ${PKGDESTDIR}/usr/share/man/man1/resolvconf.1.gz
+  }
+}
+
+systemd-tests_package() {
+  short_desc='systemd tests'
+  depends=("systemd=${version}")
+  pkg_install() {
+  	vinstall  ${PKGDESTDIR}/usr/lib/systemd
+  	vmove systemd-tests/tests  ${PKGDESTDIR}/usr/lib/systemd/tests
+  }
+}

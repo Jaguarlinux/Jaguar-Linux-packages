@@ -81,8 +81,8 @@ fi
 mkdir -p "$entries"
 
 cat <<-EOF > "$entry"
-	title        Void Linux $ARCH $VERSION
-	sort-key     void
+	title        Jaguar Linux $ARCH $VERSION
+	sort-key     jaguar
 	version      $VERSION
 	options      $CMDLINE
 	linux        $LINUX
