@@ -47,21 +47,21 @@ mutable_files="
 
 # reproducible build
 export KBUILD_BUILD_TIMESTAMP=$(LC_ALL=C date -ud @${SOURCE_DATE_EPOCH:-0})
-export KBUILD_BUILD_USER=voidlinux
-export KBUILD_BUILD_HOST=voidlinux
+export KBUILD_BUILD_USER=jaguarlinux
+export KBUILD_BUILD_HOST=jaguarlinux
 
 if [ "$CROSS_BUILD" ]; then
-	_cross="CROSS_COMPILE=${XBPS_CROSS_TRIPLET}-"
+	_cross="CROSS_COMPILE=${DULGE_CROSS_TRIPLET}-"
 fi
 
 post_extract() {
-	# doing this in post_extract instead of *_patch, so that ./xbps-src extract
+	# doing this in post_extract instead of *_patch, so that ./dulge-src extract
 	# will have the actual kernel release source code and additional patches
-	# can be applied with ./xbps-src patch in the next step.
-	if [ ! -f $XBPS_SRCDISTDIR/$pkgname-$version/patch-${version}.xz ]; then
+	# can be applied with ./dulge-src patch in the next step.
+	if [ ! -f $DULGE_SRCDISTDIR/$pkgname-$version/patch-${version}.xz ]; then
 		return
 	fi
-	xzcat $XBPS_SRCDISTDIR/$pkgname-$version/patch-${version}.xz |
+	xzcat $DULGE_SRCDISTDIR/$pkgname-$version/patch-${version}.xz |
 		patch -sNp1 -F0
 }
 
@@ -80,7 +80,7 @@ do_configure() {
 	# as modules (allmodconfig).
 	local arch subarch
 
-	case "$XBPS_TARGET_MACHINE" in
+	case "$DULGE_TARGET_MACHINE" in
 		i686*) arch=i386;;
 		x86_64*) arch=x86_64;;
 		arm*) arch=arm;;
@@ -109,7 +109,7 @@ do_configure() {
 do_build() {
 	local arch _args
 
-	case "$XBPS_TARGET_MACHINE" in
+	case "$DULGE_TARGET_MACHINE" in
 		i686*) _args="bzImage modules"; arch=i386;;
 		x86_64*) _args="bzImage modules"; arch=x86_64;;
 		arm*) _args="zImage modules dtbs"; arch=arm;;
@@ -126,7 +126,7 @@ do_build() {
 do_install() {
 	local arch subarch _args hdrdest
 
-	case "$XBPS_TARGET_MACHINE" in
+	case "$DULGE_TARGET_MACHINE" in
 		i686*) arch=x86; subarch=i386;;
 		x86_64*) arch=x86; subarch=x86_64;;
 		arm*) arch=arm;;
@@ -214,7 +214,7 @@ do_install() {
 	cp -a arch/${arch}/include ${hdrdest}/arch/${arch}
 
 	# needed for mv-debug
-	cp scripts/sign-file "${XBPS_WRAPPERDIR}"
+	cp scripts/sign-file "${DULGE_WRAPPERDIR}"
 
 	# Remove helper binaries built for host,
 	# if generated files from the scripts/ directory need to be included,
@@ -306,7 +306,7 @@ do_install() {
 	cp fs/xfs/libxfs/xfs_sb.h ${hdrdest}/fs/xfs/libxfs/xfs_sb.h
 
 	# Add objtool binary, needed to build external modules with dkms
-	case "$XBPS_TARGET_MACHINE" in
+	case "$DULGE_TARGET_MACHINE" in
 		x86_64*)
 			mkdir -p ${hdrdest}/tools/objtool
 			cp tools/objtool/objtool ${hdrdest}/tools/objtool
@@ -319,9 +319,9 @@ do_install() {
 	(
 	cd ${DESTDIR}
 	export DESTDIR
-	export SIGN_FILE="${XBPS_WRAPPERDIR}/sign-file sha512 ${wrksrc}/certs/signing_key.pem ${wrksrc}/certs/signing_key.x509"
+	export SIGN_FILE="${DULGE_WRAPPERDIR}/sign-file sha512 ${wrksrc}/certs/signing_key.pem ${wrksrc}/certs/signing_key.x509"
 	find ./ -name '*.ko' -print0 | \
-		xargs -0r -n1 -P ${XBPS_MAKEJOBS} ${FILESDIR}/mv-debug
+		xargs -0r -n1 -P ${DULGE_MAKEJOBS} ${FILESDIR}/mv-debug
 	)
 	# ... and run depmod again.
 	depmod -b ${DESTDIR}/usr -F System.map ${_kernver}
