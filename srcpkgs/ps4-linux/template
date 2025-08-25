@@ -17,7 +17,7 @@ checksum="e42a3470b58a8524268f79781ca21d07a82f60ea665672a7535b7ac21a9a4295"
 python_version=3
 
 # XXX Restrict archs until a proper <arch>-dotconfig is available in FILESDIR.
-archs="x86_64*"
+archs="x86_64* i686* aarch64*"
 
 nodebug=yes  # -dbg package is generated below manually
 nostrip=yes
@@ -47,21 +47,21 @@ mutable_files="
 
 # reproducible build
 export KBUILD_BUILD_TIMESTAMP=$(LC_ALL=C date -ud @${SOURCE_DATE_EPOCH:-0})
-export KBUILD_BUILD_USER=jaguarlinux
-export KBUILD_BUILD_HOST=jaguarlinux
+export KBUILD_BUILD_USER=voidlinux
+export KBUILD_BUILD_HOST=voidlinux
 
 if [ "$CROSS_BUILD" ]; then
-	_cross="CROSS_COMPILE=${DULGE_CROSS_TRIPLET}-"
+	_cross="CROSS_COMPILE=${XBPS_CROSS_TRIPLET}-"
 fi
 
 post_extract() {
-	# doing this in post_extract instead of *_patch, so that ./dulge-src extract
+	# doing this in post_extract instead of *_patch, so that ./xbps-src extract
 	# will have the actual kernel release source code and additional patches
-	# can be applied with ./dulge-src patch in the next step.
-	if [ ! -f $DULGE_SRCDISTDIR/$pkgname-$version/patch-${version}.xz ]; then
+	# can be applied with ./xbps-src patch in the next step.
+	if [ ! -f $XBPS_SRCDISTDIR/$pkgname-$version/patch-${version}.xz ]; then
 		return
 	fi
-	xzcat $DULGE_SRCDISTDIR/$pkgname-$version/patch-${version}.xz |
+	xzcat $XBPS_SRCDISTDIR/$pkgname-$version/patch-${version}.xz |
 		patch -sNp1 -F0
 }
 
@@ -80,8 +80,16 @@ do_configure() {
 	# as modules (allmodconfig).
 	local arch subarch
 
-	case "$DULGE_TARGET_MACHINE" in
+	case "$XBPS_TARGET_MACHINE" in
+		i686*) arch=i386;;
 		x86_64*) arch=x86_64;;
+		arm*) arch=arm;;
+		aarch64*) arch=arm64;;
+		ppc64le*) arch=powerpc; subarch=ppc64le;;
+		ppc64*) arch=powerpc; subarch=ppc64;;
+		ppc*) arch=powerpc; subarch=ppc;;
+		mips*) arch=mips;;
+		riscv64*) arch=riscv;;
 	esac
 
 	if [ -f ${FILESDIR}/${subarch:-$arch}-dotconfig-custom ]; then
@@ -101,8 +109,14 @@ do_configure() {
 do_build() {
 	local arch _args
 
-	case "$DULGE_TARGET_MACHINE" in
+	case "$XBPS_TARGET_MACHINE" in
+		i686*) _args="bzImage modules"; arch=i386;;
 		x86_64*) _args="bzImage modules"; arch=x86_64;;
+		arm*) _args="zImage modules dtbs"; arch=arm;;
+		aarch64*) _args="Image modules dtbs"; arch=arm64;;
+		ppc*) _args="zImage modules"; arch=powerpc;;
+		mips*) _args="uImage modules dtbs"; arch=mips;;
+		riscv64*) _args="Image modules dtbs"; arch=riscv;;
 	esac
 	export LDFLAGS=
 	make ARCH=$arch ${_cross} ${makejobs} prepare
@@ -112,8 +126,14 @@ do_build() {
 do_install() {
 	local arch subarch _args hdrdest
 
-	case "$DULGE_TARGET_MACHINE" in
+	case "$XBPS_TARGET_MACHINE" in
+		i686*) arch=x86; subarch=i386;;
 		x86_64*) arch=x86; subarch=x86_64;;
+		arm*) arch=arm;;
+		aarch64*) arch=arm64;;
+		ppc*) arch=powerpc;;
+		mips*) arch=mips;;
+		riscv*) arch=riscv;;
 	esac
 
 	# Run depmod after compressing modules - makes depmod.sh a noop
@@ -132,6 +152,28 @@ do_install() {
 	case "$arch" in
 		x86)
 			vinstall arch/x86/boot/bzImage 644 boot vmlinuz-${_kernver}
+			;;
+		arm)
+			vinstall arch/arm/boot/zImage 644 boot
+			make ${makejobs} ARCH=${subarch:-$arch} INSTALL_DTBS_PATH=${DESTDIR}/boot/dtbs/dtbs-${_kernver} ${_cross} dtbs_install
+			;;
+		arm64)
+			vinstall arch/arm64/boot/Image 644 boot vmlinux-${_kernver}
+			make ${makejobs} ARCH=${subarch:-$arch} INSTALL_DTBS_PATH=${DESTDIR}/boot/dtbs/dtbs-${_kernver} ${_cross} dtbs_install
+			;;
+		powerpc)
+			# zImage on powerpc is useless as it won't load initramfs
+			# raw vmlinux is huge, and this is nostrip, so do it manually
+			vinstall vmlinux 644 boot vmlinux-${_kernver}
+			/usr/bin/$STRIP ${DESTDIR}/boot/vmlinux-${_kernver}
+			;;
+		mips)
+			vinstall arch/mips/boot/uImage.bin 644 boot uImage-${_kernver}
+			make ${makejobs} ARCH=${subarch:-$arch} INSTALL_DTBS_PATH=${DESTDIR}/boot/dtbs/dtbs-${_kernver} ${_cross} dtbs_install
+			;;
+		riscv)
+			vinstall arch/riscv/boot/Image 644 boot vmlinux-${_kernver}
+			make ${makejobs} ARCH=${subarch:-$arch} INSTALL_DTBS_PATH=${DESTDIR}/boot/dtbs/dtbs-${_kernver} ${_cross} dtbs_install
 			;;
 	esac
 
@@ -172,7 +214,7 @@ do_install() {
 	cp -a arch/${arch}/include ${hdrdest}/arch/${arch}
 
 	# needed for mv-debug
-	cp scripts/sign-file "${DULGE_WRAPPERDIR}"
+	cp scripts/sign-file "${XBPS_WRAPPERDIR}"
 
 	# Remove helper binaries built for host,
 	# if generated files from the scripts/ directory need to be included,
@@ -264,7 +306,7 @@ do_install() {
 	cp fs/xfs/libxfs/xfs_sb.h ${hdrdest}/fs/xfs/libxfs/xfs_sb.h
 
 	# Add objtool binary, needed to build external modules with dkms
-	case "$DULGE_TARGET_MACHINE" in
+	case "$XBPS_TARGET_MACHINE" in
 		x86_64*)
 			mkdir -p ${hdrdest}/tools/objtool
 			cp tools/objtool/objtool ${hdrdest}/tools/objtool
@@ -277,9 +319,9 @@ do_install() {
 	(
 	cd ${DESTDIR}
 	export DESTDIR
-	export SIGN_FILE="${DULGE_WRAPPERDIR}/sign-file sha512 ${wrksrc}/certs/signing_key.pem ${wrksrc}/certs/signing_key.x509"
+	export SIGN_FILE="${XBPS_WRAPPERDIR}/sign-file sha512 ${wrksrc}/certs/signing_key.pem ${wrksrc}/certs/signing_key.x509"
 	find ./ -name '*.ko' -print0 | \
-		xargs -0r -n1 -P ${DULGE_MAKEJOBS} ${FILESDIR}/mv-debug
+		xargs -0r -n1 -P ${XBPS_MAKEJOBS} ${FILESDIR}/mv-debug
 	)
 	# ... and run depmod again.
 	depmod -b ${DESTDIR}/usr -F System.map ${_kernver}
